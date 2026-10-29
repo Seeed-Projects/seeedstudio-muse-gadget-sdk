@@ -51,9 +51,9 @@ configuration links for all six challenge devices, including reTerminal
 Sticky (experimental) and the XIAO 1.47 Touch Display.
 
 Publish your project's source code in a **public GitHub repository** and
-include its link in the project case you submit on CodeCraft Hub. Keep your
-project's code in your own GitHub repository. This repository accepts pull
-requests for device support, board-neutral Muse features and fixes.
+include a project source link in the case you submit on CodeCraft Hub.
+Keep your project's code in your own GitHub repository. This repository
+accepts pull requests for device support, board-neutral Muse features and fixes.
 
 ## Contents
 
@@ -174,6 +174,10 @@ the terminal on macOS or Linux.
    cd seeedstudio-muse-gadget-sdk/esp32
    muse --disable-sandbox
    ```
+
+   For challenge work, first ask Muse Code to read
+   [`challenge/AGENTS.md`](challenge/AGENTS.md). From the `esp32/` working
+   directory, that file is `../challenge/AGENTS.md`.
 
    The first time, it asks you to sign in and to trust the folder.
    `--disable-sandbox` lets it reach the USB port and download the tools.

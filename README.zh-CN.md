@@ -35,7 +35,7 @@ limitations under the License.
 
 先阅读[参赛指南](challenge/README.zh-CN.md)：报名后，在准备硬件和开发项目之前，先准备好用于登录 [CodeCraft Hub](https://codecraft.seeed.cc/hub/) 的**国际站（Global）账号**。指南提供六款参赛设备的配置链接，包括 reTerminal Sticky（实验性支持）和 XIAO 1.47 英寸触摸屏。
 
-参赛项目的源码**必须公开在 GitHub 上**，并在 CodeCraft Hub 发布的项目案例中附上仓库链接。参赛作品的代码保存在你自己的 GitHub 仓库里。本仓库接收设备支持、通用 Muse 功能和问题修复的 PR。
+参赛项目的源码**必须公开在 GitHub 上**，并在 CodeCraft Hub 发布的项目案例中附上作品源码链接。参赛作品的代码保存在你自己的 GitHub 仓库里。本仓库接收设备支持、通用 Muse 功能和问题修复的 PR。
 
 ## 目录
 
@@ -129,6 +129,8 @@ limitations under the License.
    cd seeedstudio-muse-gadget-sdk/esp32
    muse --disable-sandbox
    ```
+
+   参赛开发时，先让 Muse Code 阅读 [`challenge/AGENTS.md`](challenge/AGENTS.md)。从 `esp32/` 工作目录访问时，该文件的相对路径为 `../challenge/AGENTS.md`。
 
    第一次运行时它会让你登录，并确认信任这个文件夹。`--disable-sandbox` 让它能访问 USB 口和下载工具。
 3. 插上你的设备，用你自己的话告诉它你有什么。比如：

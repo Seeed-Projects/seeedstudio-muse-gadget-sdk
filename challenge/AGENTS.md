@@ -46,17 +46,19 @@ For a project in the participant's own repository, completion requires:
 Record the tested source revision, device, build result and actual hardware
 results. Report pending checks explicitly. Use the platform and board
 instructions for hardware facts, build commands and device operations.
-The root `Changing code and docs` and `Verifying a change` requirements,
-including board-matrix builds, host/simulator tests, bilingual SDK docs and
-CI registration, apply to pull requests contributed to this repository.
-Challenge entries use the four project checks above.
+Contribution checks in the root and platform `AGENTS.md` files apply to
+pull requests contributed to this repository. These include the default C5
+build and host tests in the ESP32 `Before you hand back work` section,
+board-matrix builds, simulator tests, bilingual SDK docs and CI registration.
+Projects in the participant's own repository use the four project checks
+above.
 
 ## Prepare and upload the draft
 
 When asked to submit, use the participant guide's CLI setup instructions and
 the bundled app-creation skill. Verify that the active authorization site is
-Global. Collect the required public GitHub source link and open it while
-signed out. The link must show the project directly: either the Fork's
+Global. Collect the required public GitHub project source link and open it
+while signed out. The link must show the project directly: either the Fork's
 README starts with its project introduction, or the case links to the
 project branch or change comparison. Include that link in the case.
 

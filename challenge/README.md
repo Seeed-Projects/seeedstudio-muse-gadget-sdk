@@ -3,7 +3,7 @@
 [简体中文](README.zh-CN.md)
 
 Build a project with Muse and a supported Seeed device. **Publish its source
-code in a public GitHub repository** and include the repository link in the
+code in a public GitHub repository** and include a project source link in the
 project case you publish on SenseCraft's CodeCraft Hub. Keep your project's
 code in your own GitHub repository. This repository accepts pull requests
 for device support, board-neutral Muse features and fixes.
@@ -93,6 +93,15 @@ Use these remote names throughout development:
 
 Verify that `origin`'s fetch and push URLs belong to your account before
 pushing project code. Publish your project branch to `origin`.
+
+### Sync Seeed fixes
+
+To merge the latest Seeed fixes into your project branch, run:
+
+```sh
+git fetch seeed
+git merge seeed/main
+```
 
 ### Configure your device
 
@@ -198,11 +207,21 @@ Gather the following materials:
 | Demonstration | Cover image, real-device photos and a video link when available |
 | Usage instructions | Hardware list, installation and setup steps, operation and test results |
 | Firmware | The rebuilt `muse-gadget.bin` with an empty SDK token, its target board and installation details; verify it from the Hub draft in step 6 |
-| Source code, required | A public GitHub source link that shows the project directly: introduce the project at the top of your Fork's README, or link the case directly to its project branch or change comparison |
+| Project source link, required | A public GitHub link that shows the project directly: introduce the project at the top of your Fork's README, or link the case directly to its project branch or change comparison |
 
 Open the GitHub link while signed out to confirm that visitors can see the
 project introduction and source, or its project branch or change comparison.
 Include that project-specific link in the case.
+
+For a change comparison against Seeed's `main`, use this format:
+
+```text
+https://github.com/Seeed-Projects/seeedstudio-muse-gadget-sdk/compare/main...YOUR_GITHUB_USERNAME:seeedstudio-muse-gadget-sdk:YOUR_PROJECT_BRANCH
+```
+
+Replace `YOUR_GITHUB_USERNAME` with your GitHub account and
+`YOUR_PROJECT_BRANCH` with the branch containing your project. Use your
+Fork's actual repository name if you chose a different one.
 
 ### 5.3. Set up SenseCraft CLI
 
@@ -224,10 +243,9 @@ upload project materials.
 
 Ask your agent to follow the
 [CLI documentation](https://sensecraft.seeed.cc/wiki/en/sensecraft-cli/)
-and bundled `sensecraft-apps/create-app` skill to upload the project materials
-and **only the rebuilt
-`muse-gadget.bin`** to CodeCraft Hub as a draft, including the required public
-GitHub source repository URL in the case. Have it return the draft's editing
+and its bundled app-creation skill to upload the project materials and
+**only the rebuilt `muse-gadget.bin`** to CodeCraft Hub as a draft, including
+the required public GitHub project source link in the case. Have it return the draft's editing
 link and application ID.
 
 Test the uploaded image before publishing:
@@ -250,15 +268,14 @@ same entry.
 ## 7. Review, publish and submit the case link
 
 After the draft-page device test passes, review the project information,
-hardware, firmware and public GitHub source repository link. Confirm that
-the link opens the
-project's source code while signed out, then **publish the case manually on
-CodeCraft Hub**. Use the published project-case link as your challenge
+hardware, firmware and public GitHub project source link. Confirm that the
+link opens the project's source code while signed out, then **publish the
+case manually on CodeCraft Hub**. Use the published project-case link as your challenge
 submission reference and follow the
 [challenge page](https://codecraft.seeed.cc/hub/contest/muse-gadget-challenge)
 for the submission destination and current deadlines.
 
-The published project case must include the public GitHub source link that
-shows the submitted project. Keep your project's code in your own GitHub
-repository. This repository accepts pull requests for device support,
+The published project case must include the public GitHub project source
+link that shows the submitted project. Keep your project's code in your own
+GitHub repository. This repository accepts pull requests for device support,
 board-neutral Muse features and fixes.

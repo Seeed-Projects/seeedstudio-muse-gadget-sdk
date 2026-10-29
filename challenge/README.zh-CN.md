@@ -2,7 +2,7 @@
 
 [English](README.md)
 
-使用 Muse 和受支持的 Seeed 设备制作项目。**项目源码必须公开在 GitHub 上**，并在 SenseCraft 的 CodeCraft Hub 发布的项目案例中附上仓库链接。参赛作品的代码保存在你自己的 GitHub 仓库里。本仓库接收设备支持、通用 Muse 功能和问题修复的 PR。
+使用 Muse 和受支持的 Seeed 设备制作项目。**项目源码必须公开在 GitHub 上**，并在 SenseCraft 的 CodeCraft Hub 发布的项目案例中附上作品源码链接。参赛作品的代码保存在你自己的 GitHub 仓库里。本仓库接收设备支持、通用 Muse 功能和问题修复的 PR。
 
 ## 1. 报名并准备国际站账号
 
@@ -66,6 +66,15 @@ git remote -v
 | `upstream` | `facebookincubator/muse-gadget-sdk`，保留给 Meta SDK 同步使用 |
 
 推送作品代码前，确认 `origin` 的拉取和推送地址都属于自己的账号。作品分支推送到 `origin`。
+
+### 同步 Seeed 修复
+
+在作品分支执行以下命令，获取并合并 Seeed 的最新修复：
+
+```sh
+git fetch seeed
+git merge seeed/main
+```
 
 ### 配置设备
 
@@ -131,9 +140,17 @@ Hub 会为所选设备提供开机程序（bootloader）和分区表。**Hub 烧
 | 效果展示 | 封面、真实设备照片，以及可提供的演示视频链接 |
 | 使用说明 | 硬件清单、安装和配置步骤、操作方法与实测结果 |
 | 固件 | 清空 SDK token 后重新构建的 `muse-gadget.bin`，以及对应的板卡和安装说明；在第 6 步通过 Hub 草稿页验证 |
-| 源码，必需 | 能直接展示作品的公开 GitHub 源码链接：在自己 Fork 的 README 顶部介绍作品，或在案例中直接链接到作品分支或改动对比 |
+| 作品源码链接，必需 | 能直接展示作品的公开 GitHub 链接：在自己 Fork 的 README 顶部介绍作品，或在案例中直接链接到作品分支或改动对比 |
 
 在未登录 GitHub 的状态下打开链接，确认访客可以直接看到作品介绍和源码，或对应的作品分支、改动对比，并将该作品链接写入项目案例。
+
+与 Seeed `main` 分支的改动对比链接格式如下：
+
+```text
+https://github.com/Seeed-Projects/seeedstudio-muse-gadget-sdk/compare/main...YOUR_GITHUB_USERNAME:seeedstudio-muse-gadget-sdk:YOUR_PROJECT_BRANCH
+```
+
+将 `YOUR_GITHUB_USERNAME` 替换为自己的 GitHub 用户名，将 `YOUR_PROJECT_BRANCH` 替换为作品所在的分支。如果 Fork 使用了其他仓库名，同步替换链接中的仓库名。
 
 ### 5.3. 配置 SenseCraft CLI
 
@@ -147,7 +164,7 @@ sensecraft-cli auth info
 
 ## 6. 上传并测试项目草稿
 
-让 AI 按照 [CLI 文档](https://sensecraft.seeed.cc/wiki/en/sensecraft-cli/)和配套的 `sensecraft-apps/create-app` 技能，将项目资料和**重新构建的 `muse-gadget.bin` 这一个固件文件**上传到 CodeCraft Hub，在案例中附上必需的公开 GitHub 源码仓库链接，保存为草稿，并返回草稿编辑链接和应用编号。
+让 AI 按照 [CLI 文档](https://sensecraft.seeed.cc/wiki/en/sensecraft-cli/)和 CLI 自带的应用创建技能，将项目资料和**重新构建的 `muse-gadget.bin` 这一个固件文件**上传到 CodeCraft Hub，在案例中附上必需的公开 GitHub 作品源码链接，保存为草稿，并返回草稿编辑链接和应用编号。
 
 发布前，验证已经上传的这份固件：
 
@@ -160,6 +177,6 @@ sensecraft-cli auth info
 
 ## 7. 检查、发布并提交案例链接
 
-草稿页设备验证通过后，检查项目介绍、硬件信息、固件和公开 GitHub 源码仓库链接。确认未登录 GitHub 时可以通过该链接查看项目源码，然后**在 CodeCraft Hub 上手动发布**。以发布后的项目案例链接作为参赛提交凭证，按[比赛页面](https://codecraft.seeed.cc/hub/contest/muse-gadget-challenge)说明提交到指定位置，并查看当前截止时间。
+草稿页设备验证通过后，检查项目介绍、硬件信息、固件和公开 GitHub 作品源码链接。确认未登录 GitHub 时可以通过该链接查看作品源码，然后**在 CodeCraft Hub 上手动发布**。以发布后的项目案例链接作为参赛提交凭证，按[比赛页面](https://codecraft.seeed.cc/hub/contest/muse-gadget-challenge)说明提交到指定位置，并查看当前截止时间。
 
-发布的项目案例必须包含能直接展示作品的公开 GitHub 源码链接。参赛作品的代码保存在你自己的 GitHub 仓库里。本仓库接收设备支持、通用 Muse 功能和问题修复的 PR。
+发布的项目案例必须包含能直接展示作品的公开 GitHub 作品源码链接。参赛作品的代码保存在你自己的 GitHub 仓库里。本仓库接收设备支持、通用 Muse 功能和问题修复的 PR。
