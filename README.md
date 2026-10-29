@@ -42,8 +42,22 @@ beginning, with no programming experience needed.
 > On devices marked *experimental*, some features haven't been checked on the
 > hardware yet.
 
+## SenseCraft × Muse Gadgets Challenge
+
+Start with the [challenge guide](docs/challenge.md): sign up and prepare a
+**Global (International) account** for [CodeCraft Hub](https://codecraft.seeed.cc/hub/)
+before preparing hardware or developing your project. The guide includes
+configuration links for all six challenge devices, including reTerminal
+Sticky (experimental) and the XIAO 1.47 Touch Display.
+
+Publish your project's source code in a **public GitHub repository**, such
+as your own repository or a public fork, and include its link in the project
+case you submit on CodeCraft Hub. Contributing a pull request to Seeed's
+official SDK repository is optional.
+
 ## Contents
 
+- [Challenge guide](docs/challenge.md)
 - [Supported devices](#supported-devices)
 - [What you need](#what-you-need)
 - [Step 1: Get your SDK token](#step-1-get-your-sdk-token)
@@ -226,6 +240,11 @@ several minutes.
 | XIAO AMOLED, 2.16" square | `tools/muse/board.sh build xiao-amoled-216` | `tools/muse/board.sh flash xiao-amoled-216` |
 
 #### 4. Add your SDK token
+
+This step prepares a build for your own device. For firmware shared through
+CodeCraft Hub, follow the [release build steps](docs/challenge.md#51-build-the-firmware-for-sharing):
+clear the build's token, rebuild, upload only `muse-gadget.bin`, and test
+that uploaded image from the Hub draft with your token supplied after flashing.
 
 The first build has no SDK token in it yet. It makes a settings folder named
 after your device:
