@@ -1,8 +1,8 @@
 # SenseCraft × Muse Gadgets 挑战赛
 
-[English](challenge.md)
+[English](README.md)
 
-使用 Muse 和受支持的 Seeed 设备制作项目。**项目源码必须公开在 GitHub 上**，并在 SenseCraft 的 CodeCraft Hub 发布的项目案例中附上仓库链接。可以使用自己的 GitHub 仓库或公开 Fork。向 Seeed 官方 SDK 仓库提交 PR 属于自愿贡献。
+使用 Muse 和受支持的 Seeed 设备制作项目。**项目源码必须公开在 GitHub 上**，并在 SenseCraft 的 CodeCraft Hub 发布的项目案例中附上作品源码链接。参赛作品的代码保存在你自己的 GitHub 仓库里。本仓库接收设备支持、通用 Muse 功能和问题修复的 PR。
 
 ## 1. 报名并准备国际站账号
 
@@ -29,11 +29,58 @@ Muse 账号用于设备连接 Muse，在第 3 步准备。
 
 编译工具会将这些配置与 SDK 默认配置组合使用。按你的设备对应的[编译与安装步骤](../README.zh-CN.md#方法-c自己编译)操作。[设备指南](../esp32/devices/README.md)记录了各项功能及真机验证情况，包括 Sticky 实验性支持的具体范围。
 
-## 3. 安装和配置 Muse Gadget SDK
+## 3. Fork 并配置 Muse Gadget SDK
 
-按照[入门指南](../README.zh-CN.md#第-1-步获取-sdk-token)准备 Muse 账号和 SDK token，安装固件，并在 Muse app 里完成设备配对。使用这个 Seeed SDK 仓库进行开发。
+### 从自己的 Fork 开始
 
-使用 AI 帮助配置时，在本仓库中启动编程助手，让它先阅读 [AGENTS.md](../AGENTS.md) 和本指南，并告诉它你的设备型号。AI 据此执行对应设备的配置步骤。账号凭据通过配置工具和设备设置在本地填写。
+1. 在 GitHub 打开 [Seeed SDK 仓库](https://github.com/Seeed-Projects/seeedstudio-muse-gadget-sdk)，点击 **Fork**，在自己的账号下创建公开副本。
+2. 克隆自己的 Fork，并把 Seeed 仓库添加为独立的远程仓库。将 `YOUR_GITHUB_USERNAME` 替换为自己的账号名；如果给 Fork 使用了其他名称，填写其实际地址：
+
+   ```sh
+   git clone https://github.com/YOUR_GITHUB_USERNAME/seeedstudio-muse-gadget-sdk.git
+   cd seeedstudio-muse-gadget-sdk
+   git remote add seeed https://github.com/Seeed-Projects/seeedstudio-muse-gadget-sdk.git
+   git remote -v
+   ```
+
+### 已经克隆过仓库
+
+先在 GitHub 创建自己的公开 Fork，再在已有的工作目录运行 `git remote -v`。如果 `origin` 指向 Seeed，且尚未配置 `seeed`，先重命名原来的远程仓库，再把自己的 Fork 添加为 `origin`：
+
+```sh
+git remote rename origin seeed
+git remote add origin https://github.com/YOUR_GITHUB_USERNAME/seeedstudio-muse-gadget-sdk.git
+git remote -v
+```
+
+如果 `seeed` 已存在，保留它，并使用 `git remote set-url origin https://github.com/YOUR_GITHUB_USERNAME/seeedstudio-muse-gadget-sdk.git` 将 `origin` 指向自己的 Fork。如果 `origin` 已经指向自己的 Fork，核对它的拉取和推送地址即可。
+
+如果另外配置了推送地址，使用 `git remote set-url --push origin https://github.com/YOUR_GITHUB_USERNAME/seeedstudio-muse-gadget-sdk.git` 将其指向自己的 Fork。如果已有名为 `upstream` 的远程仓库指向 Seeed，且尚未配置 `seeed`，使用 `git remote rename upstream seeed` 将其重命名。
+
+开发过程中统一使用以下名称：
+
+| 远程名称 | 对应仓库 |
+|---|---|
+| `origin` | 自己的 GitHub Fork，作品分支的推送目标 |
+| `seeed` | `Seeed-Projects/seeedstudio-muse-gadget-sdk`，Seeed SDK 仓库 |
+| `upstream` | `facebookincubator/muse-gadget-sdk`，保留给 Meta SDK 同步使用 |
+
+推送作品代码前，确认 `origin` 的拉取和推送地址都属于自己的账号。作品分支推送到 `origin`。
+
+### 同步 Seeed 修复
+
+在作品分支执行以下命令，获取并合并 Seeed 的最新修复：
+
+```sh
+git fetch seeed
+git merge seeed/main
+```
+
+### 配置设备
+
+在自己的 Fork 工作目录里，按照[入门指南](../README.zh-CN.md#第-1-步获取-sdk-token)准备 Muse 账号和 SDK token，安装固件，并在 Muse app 里完成设备配对。
+
+使用 AI 帮助配置时，在自己的 Fork 工作目录中启动编程助手，让它先阅读[根目录说明](../AGENTS.md)、[比赛执行说明](AGENTS.md)和本指南，并告诉它你的设备型号。AI 据此执行对应设备的配置步骤。账号凭据通过配置工具和设备设置在本地填写。
 
 ## 4. 开发并测试项目
 
@@ -93,9 +140,17 @@ Hub 会为所选设备提供开机程序（bootloader）和分区表。**Hub 烧
 | 效果展示 | 封面、真实设备照片，以及可提供的演示视频链接 |
 | 使用说明 | 硬件清单、安装和配置步骤、操作方法与实测结果 |
 | 固件 | 清空 SDK token 后重新构建的 `muse-gadget.bin`，以及对应的板卡和安装说明；在第 6 步通过 Hub 草稿页验证 |
-| 源码，必需 | 包含项目源码的公开 GitHub 仓库链接，可使用自己的仓库或公开 Fork |
+| 作品源码链接，必需 | 能直接展示作品的公开 GitHub 链接：在自己 Fork 的 README 顶部介绍作品，或在案例中直接链接到作品分支或改动对比 |
 
-在未登录 GitHub 的状态下打开仓库链接，确认可以直接查看项目源码，并将该链接写入项目案例。
+在未登录 GitHub 的状态下打开链接，确认访客可以直接看到作品介绍和源码，或对应的作品分支、改动对比，并将该作品链接写入项目案例。
+
+与 Seeed `main` 分支的改动对比链接格式如下：
+
+```text
+https://github.com/Seeed-Projects/seeedstudio-muse-gadget-sdk/compare/main...YOUR_GITHUB_USERNAME:seeedstudio-muse-gadget-sdk:YOUR_PROJECT_BRANCH
+```
+
+将 `YOUR_GITHUB_USERNAME` 替换为自己的 GitHub 用户名，将 `YOUR_PROJECT_BRANCH` 替换为作品所在的分支。如果 Fork 使用了其他仓库名，同步替换链接中的仓库名。
 
 ### 5.3. 配置 SenseCraft CLI
 
@@ -109,7 +164,7 @@ sensecraft-cli auth info
 
 ## 6. 上传并测试项目草稿
 
-让 AI 按照 [CLI 文档](https://sensecraft.seeed.cc/wiki/en/sensecraft-cli/)和配套的 `sensecraft-apps/create-app` 技能，将项目资料和**重新构建的 `muse-gadget.bin` 这一个固件文件**上传到 CodeCraft Hub，在案例中附上必需的公开 GitHub 源码仓库链接，保存为草稿，并返回草稿编辑链接和应用编号。
+让 AI 按照 [CLI 文档](https://sensecraft.seeed.cc/wiki/en/sensecraft-cli/)和 CLI 自带的应用创建技能，将项目资料和**重新构建的 `muse-gadget.bin` 这一个固件文件**上传到 CodeCraft Hub，在案例中附上必需的公开 GitHub 作品源码链接，保存为草稿，并返回草稿编辑链接和应用编号。
 
 发布前，验证已经上传的这份固件：
 
@@ -122,6 +177,6 @@ sensecraft-cli auth info
 
 ## 7. 检查、发布并提交案例链接
 
-草稿页设备验证通过后，检查项目介绍、硬件信息、固件和公开 GitHub 源码仓库链接。确认未登录 GitHub 时可以通过该链接查看项目源码，然后**在 CodeCraft Hub 上手动发布**。以发布后的项目案例链接作为参赛提交凭证，按[比赛页面](https://codecraft.seeed.cc/hub/contest/muse-gadget-challenge)说明提交到指定位置，并查看当前截止时间。
+草稿页设备验证通过后，检查项目介绍、硬件信息、固件和公开 GitHub 作品源码链接。确认未登录 GitHub 时可以通过该链接查看作品源码，然后**在 CodeCraft Hub 上手动发布**。以发布后的项目案例链接作为参赛提交凭证，按[比赛页面](https://codecraft.seeed.cc/hub/contest/muse-gadget-challenge)说明提交到指定位置，并查看当前截止时间。
 
-发布的项目案例必须包含公开 GitHub 源码仓库链接。希望同时改进 Seeed 官方 SDK 的开发者，可以自愿按照[贡献说明](../AGENTS.md#contributing)另行提交 PR。
+发布的项目案例必须包含能直接展示作品的公开 GitHub 作品源码链接。参赛作品的代码保存在你自己的 GitHub 仓库里。本仓库接收设备支持、通用 Muse 功能和问题修复的 PR。

@@ -1,12 +1,12 @@
 # SenseCraft × Muse Gadgets Challenge
 
-[简体中文](challenge.zh-CN.md)
+[简体中文](README.zh-CN.md)
 
 Build a project with Muse and a supported Seeed device. **Publish its source
-code in a public GitHub repository** and include the repository link in the
-project case you publish on SenseCraft's CodeCraft Hub. Use your own GitHub
-repository or a public fork. Contributing a pull request to Seeed's official
-SDK repository is optional.
+code in a public GitHub repository** and include a project source link in the
+project case you publish on SenseCraft's CodeCraft Hub. Keep your project's
+code in your own GitHub repository. This repository accepts pull requests
+for device support, board-neutral Muse features and fixes.
 
 ## 1. Sign up and prepare your Global account
 
@@ -44,14 +44,75 @@ for your board. The [device guide](../esp32/devices/README.md) records feature
 support and hardware validation, including the limits of the experimental
 Sticky port.
 
-## 3. Set up the Muse Gadget SDK
+## 3. Fork and set up the Muse Gadget SDK
 
-Follow the [beginner's guide](../README.md#step-1-get-your-sdk-token) to
-prepare your Muse account and SDK token, install the firmware and pair the
-device in the Muse app. Use this Seeed SDK checkout for development.
+### Start from your own Fork
 
-For AI-assisted setup, start your coding agent in this repository and ask it
-to read [AGENTS.md](../AGENTS.md) and this guide. Tell it which device you
+1. Open the [Seeed SDK repository](https://github.com/Seeed-Projects/seeedstudio-muse-gadget-sdk)
+   on GitHub and select **Fork** to create a public copy under your own
+   account.
+2. Clone your Fork and add Seeed as a separate remote. Replace
+   `YOUR_GITHUB_USERNAME` with your account name; use your Fork's actual URL
+   if you chose a different repository name:
+
+   ```sh
+   git clone https://github.com/YOUR_GITHUB_USERNAME/seeedstudio-muse-gadget-sdk.git
+   cd seeedstudio-muse-gadget-sdk
+   git remote add seeed https://github.com/Seeed-Projects/seeedstudio-muse-gadget-sdk.git
+   git remote -v
+   ```
+
+### Set up an existing checkout
+
+Create your public Fork on GitHub, then run `git remote -v` in the existing
+checkout. When `origin` points to Seeed and `seeed` has not been configured,
+rename that remote and add your Fork as `origin`:
+
+```sh
+git remote rename origin seeed
+git remote add origin https://github.com/YOUR_GITHUB_USERNAME/seeedstudio-muse-gadget-sdk.git
+git remote -v
+```
+
+When `seeed` already exists, keep it and set `origin` to your Fork with
+`git remote set-url origin https://github.com/YOUR_GITHUB_USERNAME/seeedstudio-muse-gadget-sdk.git`.
+When `origin` already points to your Fork, verify its fetch and push URLs.
+
+For a separately configured push URL, point it to your Fork with
+`git remote set-url --push origin https://github.com/YOUR_GITHUB_USERNAME/seeedstudio-muse-gadget-sdk.git`.
+If an existing remote named `upstream` points to Seeed and `seeed` is not
+configured, rename it with `git remote rename upstream seeed`.
+
+Use these remote names throughout development:
+
+| Remote | Repository |
+|---|---|
+| `origin` | Your own GitHub Fork; the destination for your project branches |
+| `seeed` | `Seeed-Projects/seeedstudio-muse-gadget-sdk`, the Seeed SDK |
+| `upstream` | `facebookincubator/muse-gadget-sdk`, reserved for Meta SDK synchronization |
+
+Verify that `origin`'s fetch and push URLs belong to your account before
+pushing project code. Publish your project branch to `origin`.
+
+### Sync Seeed fixes
+
+To merge the latest Seeed fixes into your project branch, run:
+
+```sh
+git fetch seeed
+git merge seeed/main
+```
+
+### Configure your device
+
+Continue from your Fork checkout with the
+[beginner's guide](../README.md#step-1-get-your-sdk-token) to prepare your
+Muse account and SDK token, install the firmware and pair the device in the
+Muse app.
+
+For AI-assisted setup, start your coding agent in your Fork checkout and ask
+it to read the [root instructions](../AGENTS.md),
+[challenge instructions](AGENTS.md) and this guide. Tell it which device you
 have; it can then follow that device's setup instructions. Configure account
 credentials locally through the setup tools and device settings.
 
@@ -146,10 +207,21 @@ Gather the following materials:
 | Demonstration | Cover image, real-device photos and a video link when available |
 | Usage instructions | Hardware list, installation and setup steps, operation and test results |
 | Firmware | The rebuilt `muse-gadget.bin` with an empty SDK token, its target board and installation details; verify it from the Hub draft in step 6 |
-| Source code, required | A public GitHub repository URL containing the project's source code; your own repository or a public fork is accepted |
+| Project source link, required | A public GitHub link that shows the project directly: introduce the project at the top of your Fork's README, or link the case directly to its project branch or change comparison |
 
-Open the GitHub link while signed out to confirm that the source code is
-publicly accessible. Include this repository URL in the project case.
+Open the GitHub link while signed out to confirm that visitors can see the
+project introduction and source, or its project branch or change comparison.
+Include that project-specific link in the case.
+
+For a change comparison against Seeed's `main`, use this format:
+
+```text
+https://github.com/Seeed-Projects/seeedstudio-muse-gadget-sdk/compare/main...YOUR_GITHUB_USERNAME:seeedstudio-muse-gadget-sdk:YOUR_PROJECT_BRANCH
+```
+
+Replace `YOUR_GITHUB_USERNAME` with your GitHub account and
+`YOUR_PROJECT_BRANCH` with the branch containing your project. Use your
+Fork's actual repository name if you chose a different one.
 
 ### 5.3. Set up SenseCraft CLI
 
@@ -171,10 +243,9 @@ upload project materials.
 
 Ask your agent to follow the
 [CLI documentation](https://sensecraft.seeed.cc/wiki/en/sensecraft-cli/)
-and bundled `sensecraft-apps/create-app` skill to upload the project materials
-and **only the rebuilt
-`muse-gadget.bin`** to CodeCraft Hub as a draft, including the required public
-GitHub source repository URL in the case. Have it return the draft's editing
+and its bundled app-creation skill to upload the project materials and
+**only the rebuilt `muse-gadget.bin`** to CodeCraft Hub as a draft, including
+the required public GitHub project source link in the case. Have it return the draft's editing
 link and application ID.
 
 Test the uploaded image before publishing:
@@ -197,15 +268,14 @@ same entry.
 ## 7. Review, publish and submit the case link
 
 After the draft-page device test passes, review the project information,
-hardware, firmware and public GitHub source repository link. Confirm that
-the link opens the
-project's source code while signed out, then **publish the case manually on
-CodeCraft Hub**. Use the published project-case link as your challenge
+hardware, firmware and public GitHub project source link. Confirm that the
+link opens the project's source code while signed out, then **publish the
+case manually on CodeCraft Hub**. Use the published project-case link as your challenge
 submission reference and follow the
 [challenge page](https://codecraft.seeed.cc/hub/contest/muse-gadget-challenge)
 for the submission destination and current deadlines.
 
-The published project case must include the public GitHub source repository
-link. Contributors who also want to improve Seeed's official SDK can
-optionally submit a pull request following its
-[contribution guidance](../AGENTS.md#contributing).
+The published project case must include the public GitHub project source
+link that shows the submitted project. Keep your project's code in your own
+GitHub repository. This repository accepts pull requests for device support,
+board-neutral Muse features and fixes.
