@@ -27,7 +27,7 @@ This file is the map. The details live next to the code:
 
 | Read | For |
 |---|---|
-| [`docs/challenge.md`](docs/challenge.md) | Challenge participation: prepare a Global account before hardware and development, develop with a supported device, and submit a CodeCraft Hub case with a public GitHub source repository; SDK pull requests are optional |
+| [`challenge/AGENTS.md`](challenge/AGENTS.md) | Challenge entries and SDK-based applications: participant repository setup, validation and CodeCraft Hub submission |
 | [`esp32/AGENTS.md`](esp32/AGENTS.md) | ESP-IDF setup, building, identifying a board, flashing, monitoring, pairing, adding a command, tests |
 | [`esp32/devices/AGENTS.md`](esp32/devices/AGENTS.md) | Porting a board: vendor sources, the overlay, the `muse_board_t` contract, docs and verification |
 | [`linux/AGENTS.md`](linux/AGENTS.md) | The Linux Device SDK (Raspberry Pi and other Linux boxes) |
@@ -48,48 +48,6 @@ This file is the map. The details live next to the code:
 | `web-flasher/` | The browser installer; `boards.json` lists its boards |
 | `linux/`, `skills/` | The Linux SDK, and device skills for Muse |
 | `README.md`, `README.zh-CN.md` | The beginner's guide to Seeed devices, in English and Chinese |
-| `docs/challenge.md`, `docs/challenge.zh-CN.md` | The challenge workflow, account requirements, device configuration links and project submission |
-
-## Challenge participation
-
-For challenge work, read [`docs/challenge.md`](docs/challenge.md) first. At
-onboarding, guide the participant to sign up and verify a Global
-(International) account can sign in to CodeCraft Hub before hardware setup
-or development. Muse account setup follows the beginner's guide separately.
-Explain at onboarding that the project's source must be publicly available
-on GitHub in the participant's own repository or a public fork, and that
-contributing a pull request to Seeed's official SDK repository is optional.
-
-Use the Seeed device configuration links in the challenge guide. Record
-build results and on-device results separately when developing the project.
-When the participant asks to submit, use the linked SenseCraft CLI setup
-guide and its bundled skills, verify the active authorization site is
-Global, and collect the required public GitHub source repository URL.
-Confirm that the repository is accessible without signing in and contains
-the project's source code. Include that URL in the project case.
-
-For shared firmware, follow the challenge guide's release steps: set
-`CONFIG_GADGET_SDK_TOKEN=""` in the selected build folder's `sdkconfig`,
-rebuild that board, verify the token remains empty in the resulting
-configuration, and scan that build's `muse-gadget.bin` with
-`grep -aqE 'mgst_[A-Za-z0-9_-]{43}' <firmware-path>`. This matches a full
-token pattern rather than the short prefix used by format validation.
-Exit code 1 passes; 0 detects a token and requires a token-free rebuild
-and rescan; 2 or higher is a check error to resolve before retrying.
-Report only the match status, keeping token values local. Upload only the
-checked `muse-gadget.bin` after it passes. Hub supplies the bootloader and
-partition table; Hub flashing supports its standard device layout.
-Projects that change the partition table are incompatible with Hub flashing.
-
-Return the draft's editing link and application ID. Guide the participant
-to test the uploaded image on their own device using the draft page's
-built-in flash button, enter their own token for post-flash serial
-provisioning, and verify the project's functions. Record actual results;
-repeat this draft-page test after each firmware update. Flashing follows
-the session's existing authorization requirements. After that test passes,
-the participant reviews the case and source link and publishes the case
-manually; return its published link as the submission reference. SDK pull
-requests are optional contributions requested separately by the participant.
 
 ## Seeed devices
 
@@ -228,6 +186,8 @@ notes under the table list what was checked, on how many units.
 
 ## Changing code and docs
 
+These conventions apply to changes contributed to this repository.
+
 - Follow [`esp32/AGENTS.md`](esp32/AGENTS.md): match the surrounding code's
   style, say Muse (never Hatch) in anything a person reads, and keep
   third-party files' licenses and headers.
@@ -245,7 +205,7 @@ notes under the table list what was checked, on how many units.
 
 ## Verifying a change
 
-Before you hand work back:
+For pull requests to this repository, before you hand work back:
 
 1. Build each board you touched from a fresh build directory, and one board
    you didn't if shared code changed. Check the overlay reached the config and
@@ -274,8 +234,9 @@ Before you hand work back:
 
 ### Where a change goes
 
-| Change | Pull request to |
+| Change | Destination |
 |---|---|
+| Challenge entries and applications built with the SDK | The participant's own GitHub repository for code; [CodeCraft Hub](https://codecraft.seeed.cc/hub/) for project cases and firmware |
 | Seeed device support, Seeed docs, the beginner's guide | This repository, [Seeed-Projects/seeedstudio-muse-gadget-sdk](https://github.com/Seeed-Projects/seeedstudio-muse-gadget-sdk), against `main` |
 | A board-neutral fix or feature, or a board ready for the official SDK | Upstream, [facebookincubator/muse-gadget-sdk](https://github.com/facebookincubator/muse-gadget-sdk), against `main` |
 

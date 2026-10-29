@@ -44,20 +44,20 @@ beginning, with no programming experience needed.
 
 ## SenseCraft × Muse Gadgets Challenge
 
-Start with the [challenge guide](docs/challenge.md): sign up and prepare a
+Start with the [challenge guide](challenge/README.md): sign up and prepare a
 **Global (International) account** for [CodeCraft Hub](https://codecraft.seeed.cc/hub/)
 before preparing hardware or developing your project. The guide includes
 configuration links for all six challenge devices, including reTerminal
 Sticky (experimental) and the XIAO 1.47 Touch Display.
 
-Publish your project's source code in a **public GitHub repository**, such
-as your own repository or a public fork, and include its link in the project
-case you submit on CodeCraft Hub. Contributing a pull request to Seeed's
-official SDK repository is optional.
+Publish your project's source code in a **public GitHub repository** and
+include its link in the project case you submit on CodeCraft Hub. Keep your
+project's code in your own GitHub repository. This repository accepts pull
+requests for device support, board-neutral Muse features and fixes.
 
 ## Contents
 
-- [Challenge guide](docs/challenge.md)
+- [Challenge guide](challenge/README.md)
 - [Supported devices](#supported-devices)
 - [What you need](#what-you-need)
 - [Step 1: Get your SDK token](#step-1-get-your-sdk-token)
@@ -166,6 +166,9 @@ the terminal on macOS or Linux.
 
 2. Download this repository and start Muse Code in it:
 
+   For challenge work, use your own Fork's URL in the clone command below,
+   following the [participant checkout setup](challenge/README.md#3-fork-and-set-up-the-muse-gadget-sdk).
+
    ```sh
    git clone https://github.com/Seeed-Projects/seeedstudio-muse-gadget-sdk
    cd seeedstudio-muse-gadget-sdk/esp32
@@ -210,6 +213,9 @@ git clone -b v6.0.1 --recursive https://github.com/espressif/esp-idf.git ~/esp/e
 
 #### 2. Download this repository (once)
 
+For challenge work, use the [participant Fork setup](challenge/README.md#3-fork-and-set-up-the-muse-gadget-sdk)
+and continue from that checkout in step 3 below.
+
 ```sh
 git clone https://github.com/Seeed-Projects/seeedstudio-muse-gadget-sdk
 ```
@@ -242,7 +248,7 @@ several minutes.
 #### 4. Add your SDK token
 
 This step prepares a build for your own device. For firmware shared through
-CodeCraft Hub, follow the [release build steps](docs/challenge.md#51-build-the-firmware-for-sharing):
+CodeCraft Hub, follow the [release build steps](challenge/README.md#51-build-the-firmware-for-sharing):
 clear the build's token, rebuild, upload only `muse-gadget.bin`, and test
 that uploaded image from the Hub draft with your token supplied after flashing.
 

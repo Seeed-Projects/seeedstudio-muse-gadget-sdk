@@ -33,13 +33,13 @@ limitations under the License.
 
 ## SenseCraft × Muse Gadgets 挑战赛
 
-先阅读[参赛指南](docs/challenge.zh-CN.md)：报名后，在准备硬件和开发项目之前，先准备好用于登录 [CodeCraft Hub](https://codecraft.seeed.cc/hub/) 的**国际站（Global）账号**。指南提供六款参赛设备的配置链接，包括 reTerminal Sticky（实验性支持）和 XIAO 1.47 英寸触摸屏。
+先阅读[参赛指南](challenge/README.zh-CN.md)：报名后，在准备硬件和开发项目之前，先准备好用于登录 [CodeCraft Hub](https://codecraft.seeed.cc/hub/) 的**国际站（Global）账号**。指南提供六款参赛设备的配置链接，包括 reTerminal Sticky（实验性支持）和 XIAO 1.47 英寸触摸屏。
 
-参赛项目的源码**必须公开在 GitHub 上**，可以使用自己的仓库或公开 Fork，并在 CodeCraft Hub 发布的项目案例中附上仓库链接。向 Seeed 官方 SDK 仓库提交 PR 属于自愿贡献。
+参赛项目的源码**必须公开在 GitHub 上**，并在 CodeCraft Hub 发布的项目案例中附上仓库链接。参赛作品的代码保存在你自己的 GitHub 仓库里。本仓库接收设备支持、通用 Muse 功能和问题修复的 PR。
 
 ## 目录
 
-- [参赛指南](docs/challenge.zh-CN.md)
+- [参赛指南](challenge/README.zh-CN.md)
 - [支持的设备](#支持的设备)
 - [需要准备什么](#需要准备什么)
 - [第 1 步：获取 SDK token](#第-1-步获取-sdk-token)
@@ -122,6 +122,8 @@ limitations under the License.
 
 2. 下载这个仓库，并在里面启动 Muse Code：
 
+   参赛开发时，按[个人 Fork 配置步骤](challenge/README.zh-CN.md#3-fork-并配置-muse-gadget-sdk)，在下面的克隆命令中使用自己 Fork 的地址。
+
    ```sh
    git clone https://github.com/Seeed-Projects/seeedstudio-muse-gadget-sdk
    cd seeedstudio-muse-gadget-sdk/esp32
@@ -158,6 +160,8 @@ git clone -b v6.0.1 --recursive https://github.com/espressif/esp-idf.git ~/esp/e
 
 #### 2. 下载这个仓库（只需一次）
 
+参赛开发时，按[个人 Fork 配置步骤](challenge/README.zh-CN.md#3-fork-并配置-muse-gadget-sdk)操作，然后在这个工作目录中继续下面的第 3 步。
+
 ```sh
 git clone https://github.com/Seeed-Projects/seeedstudio-muse-gadget-sdk
 ```
@@ -188,7 +192,7 @@ cd seeedstudio-muse-gadget-sdk/esp32
 
 #### 4. 填入 SDK token
 
-这一步用于给自己的设备构建固件。通过 CodeCraft Hub 分享固件时，按[发布用固件的构建步骤](docs/challenge.zh-CN.md#51-构建用于分享的固件)清空构建配置中的 token、重新编译，只上传 `muse-gadget.bin`，再从 Hub 草稿页烧录验证，并在烧录后填写自己的 token。
+这一步用于给自己的设备构建固件。通过 CodeCraft Hub 分享固件时，按[发布用固件的构建步骤](challenge/README.zh-CN.md#51-构建用于分享的固件)清空构建配置中的 token、重新编译，只上传 `muse-gadget.bin`，再从 Hub 草稿页烧录验证，并在烧录后填写自己的 token。
 
 第一次编译出来的固件里还没有 SDK token。编译会生成一个以设备命名的设置文件夹：
 
