@@ -33,8 +33,8 @@ Muse 账号用于设备连接 Muse，在第 3 步准备。
 
 ### 从自己的 Fork 开始
 
-1. 在 GitHub 打开 [Seeed SDK 仓库](https://github.com/Seeed-Projects/seeedstudio-muse-gadget-sdk)，点击 **Fork**，在自己的账号下创建公开副本。
-2. 克隆自己的 Fork，并把 Seeed 仓库添加为独立的远程仓库。将 `YOUR_GITHUB_USERNAME` 替换为自己的账号名；如果给 Fork 使用了其他名称，填写其实际地址：
+1. 在 GitHub 打开 [Seeed SDK 仓库](https://github.com/Seeed-Projects/seeedstudio-muse-gadget-sdk)，点击 **Fork**，在自己的账号下创建公开副本，或打开已有的 Fork。
+2. 克隆自己的 Fork，并把 Seeed 仓库添加为独立的远程仓库。将 `YOUR_GITHUB_USERNAME` 替换为自己的账号名；如果 Fork 的仓库名不同，使用其实际地址和目录名：
 
    ```sh
    git clone https://github.com/YOUR_GITHUB_USERNAME/seeedstudio-muse-gadget-sdk.git
@@ -45,7 +45,7 @@ Muse 账号用于设备连接 Muse，在第 3 步准备。
 
 ### 已经克隆过仓库
 
-先在 GitHub 创建自己的公开 Fork，再在已有的工作目录运行 `git remote -v`。如果 `origin` 指向 Seeed，且尚未配置 `seeed`，先重命名原来的远程仓库，再把自己的 Fork 添加为 `origin`：
+先在 GitHub 创建或复用自己的公开 Fork，再在已有的工作目录运行 `git remote -v`。以下命令均使用自己 Fork 的实际地址。如果 `origin` 指向 Seeed，且尚未配置 `seeed`，先重命名原来的远程仓库，再把自己的 Fork 添加为 `origin`：
 
 ```sh
 git remote rename origin seeed
@@ -61,11 +61,31 @@ git remote -v
 
 | 远程名称 | 对应仓库 |
 |---|---|
-| `origin` | 自己的 GitHub Fork，作品分支的推送目标 |
+| `origin` | 自己的公开 GitHub Fork 或仓库，作品分支的推送目标 |
 | `seeed` | `Seeed-Projects/seeedstudio-muse-gadget-sdk`，Seeed SDK 仓库 |
 | `upstream` | `facebookincubator/muse-gadget-sdk`，保留给 Meta SDK 同步使用 |
 
-推送作品代码前，确认 `origin` 的拉取和推送地址都属于自己的账号。作品分支推送到 `origin`。
+推送作品代码前，确认 `origin` 的拉取和推送地址都属于自己的账号或自己拥有的组织。作品分支推送到 `origin`。
+
+### 使用同一仓库网络中已有的 Fork
+
+如果点击 **Fork** 后打开了自己的已有仓库，例如 `YOUR_GITHUB_USERNAME/muse-gadget-sdk`，直接将这个公开 Fork 用作 `origin`。Seeed SDK 本身是 Meta SDK 的 Fork，GitHub 允许每个账号在同一仓库网络中拥有一个 Fork。按上面的步骤填写它的实际地址，再从 `seeed/main` 创建作品分支并推送到 `origin`：
+
+```sh
+git fetch seeed && git switch -c YOUR_PROJECT_BRANCH seeed/main
+git push -u origin YOUR_PROJECT_BRANCH
+```
+
+已有 Fork 仍在同一仓库网络中，因此[第 5.2 步](#52-整理项目材料)的改动对比链接仍然适用。将 `YOUR_FORK_NAME` 填为 Fork 的实际仓库名：
+
+```text
+https://github.com/Seeed-Projects/seeedstudio-muse-gadget-sdk/compare/main...YOUR_GITHUB_USERNAME:YOUR_FORK_NAME:YOUR_PROJECT_BRANCH
+```
+
+也可以选择：
+
+- 将 Seeed SDK Fork 到自己拥有的 GitHub 组织。
+- 创建新的公开仓库并将 `seeed/main` 推送过去；此时无法与 Seeed 仓库直接生成改动对比链接，按第 5.2 步在案例中链接到作品分支，或链接到以作品介绍开头的 README。
 
 ### 同步 Seeed 修复
 
@@ -147,10 +167,10 @@ Hub 会为所选设备提供开机程序（bootloader）和分区表。**Hub 烧
 与 Seeed `main` 分支的改动对比链接格式如下：
 
 ```text
-https://github.com/Seeed-Projects/seeedstudio-muse-gadget-sdk/compare/main...YOUR_GITHUB_USERNAME:seeedstudio-muse-gadget-sdk:YOUR_PROJECT_BRANCH
+https://github.com/Seeed-Projects/seeedstudio-muse-gadget-sdk/compare/main...YOUR_GITHUB_USERNAME:YOUR_FORK_NAME:YOUR_PROJECT_BRANCH
 ```
 
-将 `YOUR_GITHUB_USERNAME` 替换为自己的 GitHub 用户名，将 `YOUR_PROJECT_BRANCH` 替换为作品所在的分支。如果 Fork 使用了其他仓库名，同步替换链接中的仓库名。
+将 `YOUR_GITHUB_USERNAME` 替换为自己的 GitHub 用户名或组织名，`YOUR_FORK_NAME` 替换为 Fork 的实际仓库名，`YOUR_PROJECT_BRANCH` 替换为作品所在的分支。
 
 ### 5.3. 配置 SenseCraft CLI
 

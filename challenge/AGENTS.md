@@ -18,19 +18,24 @@ guide. Explain that the project source must be public on GitHub and linked
 from the case.
 
 Follow [step 3](README.md#3-fork-and-set-up-the-muse-gadget-sdk) to create
-a public Fork under the participant's account and configure the checkout:
+or reuse a public Fork and configure the checkout:
 
 | Remote | Destination |
 |---|---|
-| `origin` | The participant's own GitHub Fork |
+| `origin` | The participant's public GitHub Fork or project repository |
 | `seeed` | `Seeed-Projects/seeedstudio-muse-gadget-sdk` |
 | `upstream` | `facebookincubator/muse-gadget-sdk`, for Meta SDK synchronization |
 
+For an existing Fork in this network, use its actual URL as `origin`, create
+the project branch from `seeed/main`, and follow step 3's existing-Fork path
+for comparison links and repository alternatives.
+
 Before pushing, inspect `git remote -v` and verify that both the fetch and
-push URLs for `origin` belong to the participant. Confirm that existing
-`seeed` and `upstream` URLs match the table, using the participant guide to
-align remote names and any separately configured push URL. Publish the project's
-branch to that `origin` when asked to submit or publish the project's code.
+push URLs for `origin` belong to the participant or an organization they
+own. Confirm that existing `seeed` and `upstream` URLs match the table, using
+the participant guide to align remote names and any separately configured
+push URL. Publish the project's branch to that `origin` when asked to submit
+or publish the project's code.
 Route requests for official SDK improvements through the root contribution
 table.
 

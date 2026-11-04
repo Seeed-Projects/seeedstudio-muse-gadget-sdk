@@ -50,10 +50,10 @@ Sticky port.
 
 1. Open the [Seeed SDK repository](https://github.com/Seeed-Projects/seeedstudio-muse-gadget-sdk)
    on GitHub and select **Fork** to create a public copy under your own
-   account.
+   account or open your existing Fork.
 2. Clone your Fork and add Seeed as a separate remote. Replace
    `YOUR_GITHUB_USERNAME` with your account name; use your Fork's actual URL
-   if you chose a different repository name:
+   and directory name if its repository name differs:
 
    ```sh
    git clone https://github.com/YOUR_GITHUB_USERNAME/seeedstudio-muse-gadget-sdk.git
@@ -64,9 +64,10 @@ Sticky port.
 
 ### Set up an existing checkout
 
-Create your public Fork on GitHub, then run `git remote -v` in the existing
-checkout. When `origin` points to Seeed and `seeed` has not been configured,
-rename that remote and add your Fork as `origin`:
+Create or reuse your public Fork on GitHub, then run `git remote -v` in the
+existing checkout. Use your Fork's actual URL in the commands below. When
+`origin` points to Seeed and `seeed` has not been configured, rename that
+remote and add your Fork as `origin`:
 
 ```sh
 git remote rename origin seeed
@@ -87,12 +88,41 @@ Use these remote names throughout development:
 
 | Remote | Repository |
 |---|---|
-| `origin` | Your own GitHub Fork; the destination for your project branches |
+| `origin` | Your public GitHub Fork or repository; the destination for project branches |
 | `seeed` | `Seeed-Projects/seeedstudio-muse-gadget-sdk`, the Seeed SDK |
 | `upstream` | `facebookincubator/muse-gadget-sdk`, reserved for Meta SDK synchronization |
 
-Verify that `origin`'s fetch and push URLs belong to your account before
-pushing project code. Publish your project branch to `origin`.
+Verify that `origin`'s fetch and push URLs belong to your account or an
+organization you own before pushing project code. Publish your project
+branch to `origin`.
+
+### Use an existing Fork in this network
+
+If selecting **Fork** opens your existing repository, such as
+`YOUR_GITHUB_USERNAME/muse-gadget-sdk`, use that public Fork as `origin`.
+Seeed's SDK is a fork of Meta's SDK, and GitHub allows one Fork per account
+in the same repository network. Use its actual URL in the setup above, then
+create your project branch from `seeed/main` and push it to `origin`:
+
+```sh
+git fetch seeed && git switch -c YOUR_PROJECT_BRANCH seeed/main
+git push -u origin YOUR_PROJECT_BRANCH
+```
+
+The Fork is in the same network, so the change-comparison link in
+[step 5.2](#52-gather-the-project-materials) works with its actual repository
+name in `YOUR_FORK_NAME`:
+
+```text
+https://github.com/Seeed-Projects/seeedstudio-muse-gadget-sdk/compare/main...YOUR_GITHUB_USERNAME:YOUR_FORK_NAME:YOUR_PROJECT_BRANCH
+```
+
+Other options:
+
+- Fork the Seeed SDK into a GitHub organization you own.
+- Create a new public repository and push `seeed/main` to it; comparisons
+  against Seeed are unavailable, so link the case to your project branch or
+  a README that starts with the project introduction, as step 5.2 allows.
 
 ### Sync Seeed fixes
 
@@ -216,12 +246,12 @@ Include that project-specific link in the case.
 For a change comparison against Seeed's `main`, use this format:
 
 ```text
-https://github.com/Seeed-Projects/seeedstudio-muse-gadget-sdk/compare/main...YOUR_GITHUB_USERNAME:seeedstudio-muse-gadget-sdk:YOUR_PROJECT_BRANCH
+https://github.com/Seeed-Projects/seeedstudio-muse-gadget-sdk/compare/main...YOUR_GITHUB_USERNAME:YOUR_FORK_NAME:YOUR_PROJECT_BRANCH
 ```
 
-Replace `YOUR_GITHUB_USERNAME` with your GitHub account and
-`YOUR_PROJECT_BRANCH` with the branch containing your project. Use your
-Fork's actual repository name if you chose a different one.
+Replace `YOUR_GITHUB_USERNAME` with your GitHub account or organization,
+`YOUR_FORK_NAME` with your Fork's actual repository name and
+`YOUR_PROJECT_BRANCH` with the branch containing your project.
 
 ### 5.3. Set up SenseCraft CLI
 
