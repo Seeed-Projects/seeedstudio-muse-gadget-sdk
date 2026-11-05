@@ -150,4 +150,8 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv))
+    try:
+        sys.exit(main(sys.argv))
+    except ImportError:
+        sys.exit("pyserial is missing. Use ESP-IDF's Python environment after sourcing export.sh, "
+                 "or install it with: python3 -m pip install pyserial")

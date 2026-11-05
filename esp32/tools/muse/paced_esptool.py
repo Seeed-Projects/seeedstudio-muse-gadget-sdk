@@ -25,7 +25,11 @@ on the first flash block. This sends 64 bytes at a time, at the line rate.
 import sys
 import time
 
-import serial
+try:
+    import serial
+except ImportError:
+    sys.exit("pyserial is missing. Use ESP-IDF's Python environment after sourcing export.sh, "
+             "or install it with: python3 -m pip install pyserial")
 
 CHUNK = 64
 _write = serial.Serial.write
