@@ -29,9 +29,11 @@ import random
 import shlex
 import struct
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
 MUSE = ROOT / 'components/muse'
@@ -618,11 +620,17 @@ class VoicePeCallLoop(unittest.TestCase):
         cls.tmp = tempfile.TemporaryDirectory()
         cls.addClassCleanup(cls.tmp.cleanup)
         cls.binary = Path(cls.tmp.name) / 'voice_pe'
-        build([[*CC, '-std=gnu11', *SANITIZE, *WARN, '-Wno-unused-function', '-Wno-unused-parameter',
-                '-Wno-unused-variable', '-I', str(FAKES / 'voice_pe'), '-I', str(FAKES), '-I', str(JSON_SRC),
-                '-I', str(TESTS), '-I', str(ROOT / 'main'), '-I', str(MUSE),
-                str(TESTS / 'voice_pe_call_harness.c'), str(MUSE / 'muse_voice_call_core.c'),
-                str(JSON_SRC / 'cJSON.c'), '-lm', '-o', str(cls.binary)]])
+        cjson = Path(cls.tmp.name) / 'cjson.o'
+        json_warn = ['-Wno-deprecated-declarations'] if sys.platform == 'darwin' else []
+        build([
+            [*CC, '-std=gnu11', *SANITIZE, *WARN, *json_warn, '-I', str(JSON_SRC),
+             '-c', str(JSON_SRC / 'cJSON.c'), '-o', str(cjson)],
+            [*CC, '-std=gnu11', *SANITIZE, *WARN, '-Wno-unused-function', '-Wno-unused-parameter',
+             '-Wno-unused-variable', '-I', str(FAKES / 'voice_pe'), '-I', str(FAKES), '-I', str(JSON_SRC),
+             '-I', str(TESTS), '-I', str(ROOT / 'main'), '-I', str(MUSE),
+             str(TESTS / 'voice_pe_call_harness.c'), str(MUSE / 'muse_voice_call_core.c'),
+             str(cjson), '-lm', '-o', str(cls.binary)],
+        ])
 
     def run_case(self, case):
         result = subprocess.run([str(self.binary), str(case)], capture_output=True, text=True, env=ENV)
@@ -633,6 +641,28 @@ class VoicePeCallLoop(unittest.TestCase):
 
     def test_mute_between_captures_drops_the_next(self):
         self.run_case(1)
+
+
+class VoicePeBuildFlags(unittest.TestCase):
+    def test_deprecation_suppression_is_scoped_to_darwin_cjson(self):
+        for platform in ('darwin', 'linux'):
+            with self.subTest(platform=platform), mock.patch('sys.platform', platform), \
+                    mock.patch.object(subprocess, 'run', return_value=subprocess.CompletedProcess(
+                        [], 0, stdout='', stderr='')) as run:
+                try:
+                    VoicePeCallLoop.setUpClass()
+                    commands = [call.args[0] for call in run.call_args_list]
+                    cjson, = [command for command in commands if str(JSON_SRC / 'cJSON.c') in command]
+                    self.assertIn('-c', cjson)
+                    project, = [command for command in commands
+                                if str(TESTS / 'voice_pe_call_harness.c') in command]
+                    self.assertNotIn('-Wno-deprecated-declarations', project)
+                    for command in (cjson, project):
+                        self.assertIn('-Werror', command)
+                        self.assertIn('-fsanitize=address,undefined', command)
+                    self.assertEqual('-Wno-deprecated-declarations' in cjson, platform == 'darwin')
+                finally:
+                    VoicePeCallLoop.doClassCleanups()
 
 
 class VoiceCallWiring(unittest.TestCase):
