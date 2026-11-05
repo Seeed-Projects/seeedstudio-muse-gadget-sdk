@@ -19,8 +19,10 @@ import re
 import shlex
 import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
+from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
 MUSE = ROOT / 'components/muse'
@@ -38,6 +40,11 @@ class StopWatchPTT(unittest.TestCase):
         cls.tmp = tempfile.TemporaryDirectory()
         cls.addClassCleanup(cls.tmp.cleanup)
         cls.binaries = {}
+        link_flags = []
+        if sys.platform.startswith('linux'):
+            link_flags = ['-Wl,--gc-sections', '-no-pie']
+        elif sys.platform == 'darwin':
+            link_flags = ['-Wl,-dead_strip']
         for board, realtime in ((1, 1), (0, 1), (1, 0)):
             stage = Path(cls.tmp.name) / f'{board}-{realtime}'
             stage.mkdir()
@@ -77,9 +84,9 @@ class StopWatchPTT(unittest.TestCase):
                 command = [*shlex.split(os.environ.get('CC', 'cc')), '-std=gnu11',
                            '-Wall', '-Wextra', '-Werror', '-Wno-unused-parameter',
                            '-Wno-unused-variable', '-Wno-unused-function',
-                           '-ffunction-sections', '-fdata-sections', '-Wl,--gc-sections',
+                           '-ffunction-sections', '-fdata-sections', *link_flags,
                            '-g', '-O1', '-fsanitize=address,undefined', '-fno-omit-frame-pointer',
-                           '-no-pie', '-include', str(ROOT / 'tests/host_compat.h'),
+                           '-include', str(ROOT / 'tests/host_compat.h'),
                            '-I', str(stage), str(source)]
                 if kind == 'voice' and realtime:
                     command.append(str(MUSE / 'muse_voice_call_core.c'))
@@ -222,6 +229,26 @@ class StopWatchPTT(unittest.TestCase):
         self.run_case('voice', 21)
         self.run_case('voice', 20, board=0)
         self.run_case('voice', 20, realtime=0)
+
+
+class StopWatchBuildFlags(unittest.TestCase):
+    def test_linker_flags_match_host(self):
+        for platform in ('darwin', 'linux'):
+            with self.subTest(platform=platform), mock.patch('sys.platform', platform), \
+                    mock.patch.object(subprocess, 'run', return_value=subprocess.CompletedProcess(
+                        [], 0, stdout='', stderr='')) as run:
+                try:
+                    StopWatchPTT.setUpClass()
+                    self.assertTrue(run.call_args_list)
+                    for call in run.call_args_list:
+                        command = call.args[0]
+                        self.assertIn('-Werror', command)
+                        self.assertEqual('-Wl,--gc-sections' in command, platform == 'linux')
+                        self.assertEqual('-no-pie' in command, platform == 'linux')
+                        if platform == 'darwin':
+                            self.assertIn('-Wl,-dead_strip', command)
+                finally:
+                    StopWatchPTT.doClassCleanups()
 
 
 class StopWatchControlMapping(unittest.TestCase):
