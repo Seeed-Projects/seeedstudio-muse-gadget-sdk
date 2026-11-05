@@ -162,8 +162,12 @@ never has a command's parameters, output or error message.
   `POST /chat/stream` requests on the same session, with `device_id` set to the
   node id and `"output_modality": "text"`. `session_id` picks the chat;
   `chat_id` is not an API field and is ignored. The response is only the ack
-  (`message_id`); the reply appears in the Muse chat. Replies are text: to
-  speak them, use a text-to-speech API of your choice.
+  (`message_id` and `session_id`). Keep `POST /chat/subscribe` open before
+  sending to follow the user echo and assistant messages. See
+  [Device-posted chat turns](../esp32/AGENTS.md#device-posted-chat-turns) for
+  reply matching, `seq` de-duplication, quiet completion with or without a
+  reply, and how Muse treats device-posted text as data. Replies are text:
+  to speak them, use a text-to-speech API of your choice.
 - The VM accepts at most 256 KB per message from the device, so command output
   is cut at 96 KB per stream.
 
