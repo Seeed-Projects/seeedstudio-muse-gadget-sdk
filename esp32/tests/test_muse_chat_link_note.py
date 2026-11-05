@@ -26,6 +26,7 @@ import unittest
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from cjson_source import cjson_source_dir  # noqa: E402
 from test_muse_voice_note import (  # noqa: E402
     ENV, MUSE, ROOT, SANITIZE, NoteRequestAssertions, parse_run, pcm_bytes)
 
@@ -148,6 +149,7 @@ class LinkVoiceNote(NoteRequestAssertions, unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        cjson = cjson_source_dir()
         cls.tmp = tempfile.TemporaryDirectory()
         cls.addClassCleanup(cls.tmp.cleanup)
         out = Path(cls.tmp.name)
@@ -155,7 +157,6 @@ class LinkVoiceNote(NoteRequestAssertions, unittest.TestCase):
         # Platform includes only; the helpers it calls are the real ones.
         source = re.sub(r'^#include .*$', '', source, flags=re.MULTILINE)
         (out / 'link.c').write_text(CODE.replace('{source}', source))
-        cjson = ROOT / 'managed_components/espressif__cjson/cJSON'
         cc = [*shlex.split(os.environ.get('CC', 'cc')), '-std=gnu11', '-Wall', '-Wextra', '-Werror']
         helpers = ['-include', str(ROOT / 'tests/host_compat.h'), '-I', str(MUSE)]
         commands = [

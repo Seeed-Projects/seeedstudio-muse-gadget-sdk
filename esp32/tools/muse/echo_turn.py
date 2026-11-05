@@ -20,7 +20,11 @@ Look for "recorded 3.08s" and the Muse turn logs (with Muse not set up, the pres
 import sys
 import time
 
-import serial
+try:
+    import serial
+except ImportError:
+    sys.exit("pyserial is missing. Use ESP-IDF's Python environment after sourcing export.sh, "
+             "or install it with: python3 -m pip install pyserial")
 
 s = serial.Serial(sys.argv[1], 115200, timeout=0.2)
 s.dtr = False; s.rts = True; time.sleep(0.1); s.rts = False

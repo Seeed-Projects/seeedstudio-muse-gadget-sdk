@@ -55,7 +55,8 @@ def find_ports():
     try:
         return ports.command_ports()
     except ImportError:
-        raise BoardError("pyserial is missing: python3 -m pip install pyserial")
+        raise BoardError("pyserial is missing. Use ESP-IDF's Python environment after sourcing export.sh, "
+                         "or install it with: python3 -m pip install pyserial")
 
 
 def pick_port():
@@ -122,7 +123,8 @@ class Board:
         try:
             import serial
         except ImportError:
-            raise BoardError("pyserial is missing: python3 -m pip install pyserial")
+            raise BoardError("pyserial is missing. Use ESP-IDF's Python environment after sourcing export.sh, "
+                             "or install it with: python3 -m pip install pyserial")
         self.port = port
         try:
             self.ser = serial.Serial(port, 115200, timeout=0.05)

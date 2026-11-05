@@ -17,28 +17,27 @@ from __future__ import annotations
 import os
 import shlex
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from cjson_source import cjson_source_dir
 
 ROOT = Path(__file__).resolve().parents[1]
-JSON = Path(os.environ.get(
-    "CJSON_SOURCE_DIR", ROOT / "managed_components/espressif__cjson/cJSON"
-))
 
 
 class BleCommandsTest(unittest.TestCase):
     def test_commands_against_a_fake_client(self) -> None:
-        if not (JSON / "cJSON.c").exists():
-            raise unittest.SkipTest("cJSON sources not available (run idf.py build once)")
+        json_source = cjson_source_dir()
         cc = shlex.split(os.environ.get("CC", "cc"))
         with tempfile.TemporaryDirectory() as tmp:
             binary = Path(tmp) / "ble_commands"
             cjson = Path(tmp) / "cjson.o"
             built = subprocess.run(
                 [*cc, "-std=c11", "-w", "-DCJSON_NESTING_LIMIT=16", "-c",
-                 str(JSON / "cJSON.c"), "-o", str(cjson)],
+                 str(json_source / "cJSON.c"), "-o", str(cjson)],
                 capture_output=True, text=True)
             self.assertEqual(built.returncode, 0, built.stdout + built.stderr)
             built = subprocess.run(
@@ -46,7 +45,7 @@ class BleCommandsTest(unittest.TestCase):
                  "-fsanitize=address,undefined", "-fno-omit-frame-pointer",
                  "-D_DEFAULT_SOURCE", "-DCJSON_NESTING_LIMIT=16",
                  "-I", str(ROOT / "tests" / "ble_commands_fakes"),
-                 "-I", str(ROOT / "main"), "-I", str(JSON),
+                 "-I", str(ROOT / "main"), "-I", str(json_source),
                  str(ROOT / "tests" / "ble_commands_harness.c"),
                  str(ROOT / "main" / "ble_commands.c"),
                  str(cjson), "-lm", "-o", str(binary)],

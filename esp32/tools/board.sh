@@ -126,11 +126,33 @@ case "$ACTION" in
   *) echo "error: unknown action '$ACTION'" >&2; usage 2 ;;
 esac
 
+idf_activation_failed() {
+  echo "error: ESP-IDF activation failed: $1" >&2
+  tail -n 20 "$2" >&2
+  echo "Full activation log: $2" >&2
+  echo "For a missing or mismatched Python environment, set IDF_PYTHON_ENV_PATH to a compatible ESP-IDF Python environment, or re-run:" >&2
+  printf '  "%s/install.sh"\n' "$(dirname "$1")" >&2
+  exit 1
+}
+
+# Activate ESP-IDF in this shell and report failures within export.sh.
+activate_idf() {
+  local export_script="$1" export_log failure_trap
+  export_log=$(mktemp "${TMPDIR:-/tmp}/muse-idf-export.XXXXXX") || exit 1
+  # File descriptor 3 carries diagnostics while export output is captured.
+  exec 3>&2
+  printf -v failure_trap 'idf_activation_failed %q %q >&3 2>&3' "$export_script" "$export_log"
+  trap "$failure_trap" EXIT
+  # shellcheck disable=SC1090
+  . "$export_script" >"$export_log" 2>&1
+  trap - EXIT
+  exec 3>&-
+}
+
 if ! command -v idf.py >/dev/null 2>&1; then
   for d in "${IDF_PATH:-}" "$HOME/esp/esp-idf-v6.0.1" "$HOME/esp/esp-idf-v6" "$HOME/esp/esp-idf"; do
     if [ -n "$d" ] && [ -f "$d/export.sh" ]; then
-      # shellcheck disable=SC1091
-      . "$d/export.sh" >/dev/null 2>&1
+      activate_idf "$d/export.sh"
       break
     fi
   done

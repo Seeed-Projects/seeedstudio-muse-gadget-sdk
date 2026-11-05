@@ -5,18 +5,20 @@ import os
 from pathlib import Path
 import shlex
 import subprocess
+import sys
 import tempfile
 import unittest
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from cjson_source import cjson_source_dir
+
 ROOT = Path(__file__).resolve().parents[1]
-JSON = Path(os.environ.get(
-    'CJSON_SOURCE_DIR', ROOT / 'managed_components/espressif__cjson/cJSON'
-))
 
 
 class ChatSession(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        json_source = cjson_source_dir()
         cls.tmp = tempfile.TemporaryDirectory()
         cls.addClassCleanup(cls.tmp.cleanup)
         out = Path(cls.tmp.name)
@@ -192,12 +194,12 @@ int main(int argc, char **argv) {
 }
 '''
         (out / 'session.cpp').write_text(code)
-        flags = ['-Wall', '-Wextra', '-Werror', '-I', str(JSON),
+        flags = ['-Wall', '-Wextra', '-Werror', '-I', str(json_source),
                  '-I', str(ROOT / 'tests'), '-I', str(ROOT / 'components/muse'),
                  '-I', str(ROOT / 'components/minimp3/include')]
         commands = [
             [*shlex.split(os.environ.get('CC', 'cc')), '-std=c11', *flags,
-             '-c', str(JSON / 'cJSON.c'), '-o', str(out / 'cjson.o')],
+             '-c', str(json_source / 'cJSON.c'), '-o', str(out / 'cjson.o')],
             [*shlex.split(os.environ.get('CXX', 'c++')), '-std=gnu++17', *flags,
              str(out / 'session.cpp'), str(out / 'cjson.o'), '-o', str(out / 'session')],
         ]

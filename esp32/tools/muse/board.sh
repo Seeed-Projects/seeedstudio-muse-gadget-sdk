@@ -77,11 +77,36 @@ if [ "$target" = esp32s31 ]; then
     [ -d "$MOSAICO_UTILS/ESP-Iris/components/esp_iris" ] || { echo "esp-mosaico-utils not found at $MOSAICO_UTILS (set MOSAICO_UTILS)" >&2; exit 1; }
     iris="-DMOSAICO_UTILS=$MOSAICO_UTILS"
 fi
+idf_activation_failed() {
+    echo "error: ESP-IDF activation failed: $1" >&2
+    tail -n 20 "$2" >&2
+    echo "Full activation log: $2" >&2
+    echo "For a missing or mismatched Python environment, set IDF_PYTHON_ENV_PATH to a compatible ESP-IDF Python environment, or re-run:" >&2
+    printf '  "%s/install.sh"\n' "$(dirname "$1")" >&2
+    exit 1
+}
+
+# Activate ESP-IDF in this shell and report failures within export.sh.
+activate_idf() {
+    local export_script="$1" export_log failure_trap
+    export_log=$(mktemp "${TMPDIR:-/tmp}/muse-idf-export.XXXXXX") || exit 1
+    # File descriptor 3 carries diagnostics while export output is captured.
+    exec 3>&2
+    printf -v failure_trap 'idf_activation_failed %q %q >&3 2>&3' "$export_script" "$export_log"
+    trap "$failure_trap" EXIT
+    set -e
+    # shellcheck disable=SC1090
+    . "$export_script" >"$export_log" 2>&1
+    set +e
+    trap - EXIT
+    exec 3>&-
+}
+
 if [ -n "${IDF_EXPORT:-}" ]; then
-    . "$IDF_EXPORT" >/dev/null 2>&1
+    activate_idf "$IDF_EXPORT"
 elif ! command -v idf.py >/dev/null 2>&1; then
     for d in "$HOME/.espressif/esp-idf-v6.0.1" "${IDF_PATH:-}" "$HOME/esp/esp-idf-v6.0.1" "$HOME/esp/esp-idf-v6" "$HOME/esp/esp-idf"; do
-        [ -n "$d" ] && [ -f "$d/export.sh" ] && { . "$d/export.sh" >/dev/null 2>&1; break; }
+        [ -n "$d" ] && [ -f "$d/export.sh" ] && { activate_idf "$d/export.sh"; break; }
     done
 fi
 command -v idf.py >/dev/null 2>&1 || { echo "idf.py not found; activate ESP-IDF v6.0.1 first" >&2; exit 1; }

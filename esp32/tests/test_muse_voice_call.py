@@ -35,11 +35,13 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from cjson_source import cjson_source_dir
+
 ROOT = Path(__file__).resolve().parents[1]
 MUSE = ROOT / 'components/muse'
 TESTS = ROOT / 'tests'
 FAKES = TESTS / 'voice_call_fakes'
-JSON_SRC = Path(os.environ.get('CJSON_SOURCE_DIR', ROOT / 'managed_components/espressif__cjson/cJSON'))
 SANITIZE = ['-O1', '-g', '-fsanitize=address,undefined', '-fno-omit-frame-pointer']
 WARN = ['-Wall', '-Wextra', '-Werror']
 ENV = {**os.environ,
@@ -617,16 +619,17 @@ class VoicePeCallLoop(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        json_source = cjson_source_dir()
         cls.tmp = tempfile.TemporaryDirectory()
         cls.addClassCleanup(cls.tmp.cleanup)
         cls.binary = Path(cls.tmp.name) / 'voice_pe'
         cjson = Path(cls.tmp.name) / 'cjson.o'
         json_warn = ['-Wno-deprecated-declarations'] if sys.platform == 'darwin' else []
         build([
-            [*CC, '-std=gnu11', *SANITIZE, *WARN, *json_warn, '-I', str(JSON_SRC),
-             '-c', str(JSON_SRC / 'cJSON.c'), '-o', str(cjson)],
+            [*CC, '-std=gnu11', *SANITIZE, *WARN, *json_warn, '-I', str(json_source),
+             '-c', str(json_source / 'cJSON.c'), '-o', str(cjson)],
             [*CC, '-std=gnu11', *SANITIZE, *WARN, '-Wno-unused-function', '-Wno-unused-parameter',
-             '-Wno-unused-variable', '-I', str(FAKES / 'voice_pe'), '-I', str(FAKES), '-I', str(JSON_SRC),
+             '-Wno-unused-variable', '-I', str(FAKES / 'voice_pe'), '-I', str(FAKES), '-I', str(json_source),
              '-I', str(TESTS), '-I', str(ROOT / 'main'), '-I', str(MUSE),
              str(TESTS / 'voice_pe_call_harness.c'), str(MUSE / 'muse_voice_call_core.c'),
              str(cjson), '-lm', '-o', str(cls.binary)],
@@ -645,6 +648,7 @@ class VoicePeCallLoop(unittest.TestCase):
 
 class VoicePeBuildFlags(unittest.TestCase):
     def test_deprecation_suppression_is_scoped_to_darwin_cjson(self):
+        cjson_c = str(cjson_source_dir() / 'cJSON.c')
         for platform in ('darwin', 'linux'):
             with self.subTest(platform=platform), mock.patch('sys.platform', platform), \
                     mock.patch.object(subprocess, 'run', return_value=subprocess.CompletedProcess(
@@ -652,7 +656,7 @@ class VoicePeBuildFlags(unittest.TestCase):
                 try:
                     VoicePeCallLoop.setUpClass()
                     commands = [call.args[0] for call in run.call_args_list]
-                    cjson, = [command for command in commands if str(JSON_SRC / 'cJSON.c') in command]
+                    cjson, = [command for command in commands if cjson_c in command]
                     self.assertIn('-c', cjson)
                     project, = [command for command in commands
                                 if str(TESTS / 'voice_pe_call_harness.c') in command]
@@ -670,7 +674,8 @@ class VoiceCallWiring(unittest.TestCase):
     it neither names an app ID nor calls into the call."""
 
     def compile_session(self, calls, *extra):
-        inc = ['-I', str(FAKES / 'session'), '-I', str(FAKES), '-I', str(JSON_SRC), '-I', str(TESTS / 'link_fakes'),
+        json_source = cjson_source_dir()
+        inc = ['-I', str(FAKES / 'session'), '-I', str(FAKES), '-I', str(json_source), '-I', str(TESTS / 'link_fakes'),
                '-I', str(TESTS), '-I', str(MUSE), '-I', str(ROOT / 'components/noise_core/include'),
                '-I', str(ROOT / 'components/minimp3/include')]
         command = [*CXX, '-std=gnu++17', *WARN, *([] if calls else ['-DMUSE_TEST_CALLS_OFF']), *inc,

@@ -33,6 +33,7 @@ This file is the map. The details live next to the code:
 | [`linux/AGENTS.md`](linux/AGENTS.md) | The Linux Device SDK (Raspberry Pi and other Linux boxes) |
 | [`esp32/devices/README.md`](esp32/devices/README.md) | Every board's hardware, features and build, and what has been checked on hardware |
 | [`skills/README.md`](skills/README.md) | Markdown skills that teach Muse to use other devices through a gadget |
+| [CodeCraft Hub guide](README.md#share-your-project-on-codecraft-hub) | Sharing a project for one-click firmware deployment; required for the Seeed Studio Muse Gadget Challenge |
 
 ## Repository map
 
@@ -135,6 +136,15 @@ python3 tools/muse/chat.py "What can you do with this gadget?"
 the quickest way to see whether Muse finds and uses a new command. On a UI
 board, `MUSE_BENCH=1` builds take screenshots with `tools/muse/snap.py`.
 
+## Upload to CodeCraft Hub
+
+[CodeCraft Hub](https://codecraft.seeed.cc/hub/) is the community platform where people can discover your project, and easily deploy your Muse Gadget application with one-click.
+
+Uploading is **optional** for general development and use, but **required if
+you want to participate in the [Seeed Studio Muse Gadget Challenge](https://codecraft.seeed.cc/hub/contest/muse-gadget-challenge).**
+
+Use [`sensecraft-cli`](https://github.com/Seeed-Solution/sensecraft-cli) to upload projects to CodeCraft Hub. Follow the [set up guide](https://sensecraft.seeed.cc/wiki/en/sensecraft-cli/guides/getting-started/setting-up/) to install, complete authorization, and load the skills. Then use the /create-app skill to turn this project into a deployable application on CodeCraft Hub.
+
 ## Credentials and backups
 
 - The SDK token goes in the build directory's `sdkconfig` as
@@ -210,9 +220,11 @@ For pull requests to this repository, before you hand work back:
 1. Build each board you touched from a fresh build directory, and one board
    you didn't if shared code changed. Check the overlay reached the config and
    the app-size line, as [Verify](esp32/devices/AGENTS.md#8-verify) describes.
-2. Run the host tests from `esp32/`. `tools/muse/board.sh` clears
-   `managed_components/`, so run one `idf.py build` first (the default C5
-   build is enough), then `python3 -m unittest discover -s tests -p 'test_*.py'`.
+2. Run `python3 -m unittest discover -s tests -p 'test_*.py'` from `esp32/`.
+   cJSON lookup uses `CJSON_SOURCE_DIR` (containing `cJSON.c` and `cJSON.h`),
+   then `managed_components/`, then the ESP-IDF component manager cache,
+   which remains after a UI-board build. Missing sources skip with setup
+   instructions.
    E-ink navigation tests use the pinned FreeInk checkout through
    `FREEINK_SOURCE_DIR` or `managed_components/freeink-sdk` from a Sticky
    configure. Report skipped tests and their missing inputs.

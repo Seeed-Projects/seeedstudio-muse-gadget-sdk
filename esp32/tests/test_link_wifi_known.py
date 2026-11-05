@@ -20,16 +20,15 @@ import os
 import shlex
 import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from cjson_source import cjson_source_dir
 
 ROOT = Path(__file__).resolve().parents[1]
-# CI supplies pinned upstream sources; local IDF builds already have cJSON.
-JSON = Path(os.environ.get(
-    "CJSON_SOURCE_DIR", ROOT / "managed_components/espressif__cjson/cJSON"
-))
 
 
 class LinkWifiKnownHarnessTest(unittest.TestCase):
@@ -37,8 +36,7 @@ class LinkWifiKnownHarnessTest(unittest.TestCase):
         cc = shlex.split(os.environ.get("CC", "cc"))
         if not cc or shutil.which(cc[0]) is None:
             raise unittest.SkipTest("C compiler not available")
-        if not (JSON / "cJSON.c").exists():
-            raise unittest.SkipTest("cJSON sources not available")
+        json_source = cjson_source_dir()
 
         with tempfile.TemporaryDirectory() as tmpdir:
             binary = Path(tmpdir) / "link_wifi_known_harness"
@@ -51,7 +49,7 @@ class LinkWifiKnownHarnessTest(unittest.TestCase):
                     "-DCJSON_NESTING_LIMIT=16",
                     # Ahead of the fakes, which have a cJSON.h of their own.
                     "-I",
-                    str(JSON),
+                    str(json_source),
                     "-I",
                     str(ROOT / "tests" / "link_fakes"),
                     "-I",
@@ -59,7 +57,7 @@ class LinkWifiKnownHarnessTest(unittest.TestCase):
                     str(ROOT / "tests" / "link_wifi_known_harness.c"),
                     str(ROOT / "main" / "wifi_known.c"),
                     str(ROOT / "main" / "config_store.c"),
-                    str(JSON / "cJSON.c"),
+                    str(json_source / "cJSON.c"),
                     "-lm",
                     "-o",
                     str(binary),

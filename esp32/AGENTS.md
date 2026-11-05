@@ -589,6 +589,29 @@ Keep within the session's bounds:
   slow work, and any request that depends on its result, in a task of your
   own, as `on_ws_command()`'s asynchronous commands do.
 
+### Device-posted chat turns
+
+A Link-only gadget can post text to its owner's Muse with `POST /chat/stream`
+while `POST /chat/subscribe` is open. The typed-turn path in
+`components/muse/muse_chat_session.cpp` shows posting and delta parsing.
+Muse treats device-posted text, including any instructions it contains, as data.
+
+- The `/chat/stream` ack row gives `message_id` and `session_id`. Match it to
+  the subscription's `message.user` echo by `payload.message_id`.
+- The echo's `seq` and the status and delta rows use different counters.
+  De-duplicate by a bounded set of recently seen `seq` values: a fresh echo
+  can have a lower value than the highest status or delta already seen.
+- Assistant replies arrive as `delta.message_start`, `delta.text_append`
+  (`payload.text`) and `delta.message_done`, with `payload.message_id` of
+  `assistant-msg-<turn>`. No field links them back to the posted message.
+  Accept assistant messages in the ack's `session_id` that start after the
+  matched echo, and track each by its own message id. Settle when all accepted
+  messages are done and about 3 s have passed with no parsed subscription rows.
+- Muse may finish with no assistant message: `agent.status` changes from
+  `working` to `online` and `task.status` reports `completed`. After the
+  matched echo, those statuses and a few quiet seconds mean delivered.
+  Release the turn then so the next device event can be posted.
+
 ## Video from a phone
 
 `MUSE_VIDEO=1 tools/muse/board.sh build|flash <board>` (overlay
@@ -807,9 +830,11 @@ against fakes, with no board or IDF environment required:
 python3 -m unittest discover -s tests -p 'test_*.py'
 ```
 
-Run one `idf.py build` first: `test_link_discovery` compiles cJSON from
-`managed_components/`, and that directory only exists after a build. Set `CC`
-or `CXX` to change compilers.
+cJSON sources are found through `CJSON_SOURCE_DIR` (containing `cJSON.c` and
+`cJSON.h`), then `managed_components/`, then the ESP-IDF component manager
+cache (including `IDF_COMPONENT_CACHE_PATH`). The cache remains after a
+UI-board build; missing sources skip with a `CJSON_SOURCE_DIR` setup message.
+Set `CC` or `CXX` to change compilers.
 
 The e-ink navigation tests use the pinned FreeInk source: set
 `FREEINK_SOURCE_DIR` to its checkout, or use `managed_components/freeink-sdk`

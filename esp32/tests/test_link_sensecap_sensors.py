@@ -16,19 +16,20 @@ from pathlib import Path
 import os
 import shlex
 import subprocess
+import sys
 import tempfile
 import unittest
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from cjson_source import cjson_source_dir
+
 ROOT = Path(__file__).resolve().parents[1]
-# CI supplies pinned upstream sources; local IDF builds already have cJSON.
-JSON = Path(os.environ.get(
-    "CJSON_SOURCE_DIR", ROOT / "managed_components/espressif__cjson/cJSON"
-))
 
 
 class LinkSensecapSensorsTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        json_source = cjson_source_dir()
         cls.temp = tempfile.TemporaryDirectory()
         cls.addClassCleanup(cls.temp.cleanup)
         out = Path(cls.temp.name)
@@ -36,9 +37,9 @@ class LinkSensecapSensorsTest(unittest.TestCase):
         start = source.index("// ---- Protocol (host-tested)")
         (out / "sensors_protocol.inc").write_text(source[start:source.index("// ---- RP2040 UART", start)])
         cc = shlex.split(os.environ.get("CC", "cc"))
-        flags = ["-Wall", "-Wextra", "-Werror", "-DCJSON_NESTING_LIMIT=16", "-I", str(JSON), "-I", str(out)]
+        flags = ["-Wall", "-Wextra", "-Werror", "-DCJSON_NESTING_LIMIT=16", "-I", str(json_source), "-I", str(out)]
         commands = [
-            [*cc, "-std=c11", *flags, "-c", str(JSON / "cJSON.c"), "-o", str(out / "cjson.o")],
+            [*cc, "-std=c11", *flags, "-c", str(json_source / "cJSON.c"), "-o", str(out / "cjson.o")],
             [*cc, "-std=c11", *flags, str(ROOT / "tests/link_sensecap_sensors_harness.c"), str(out / "cjson.o"), "-lm", "-o", str(out / "sensors")],
         ]
         for cmd in commands:

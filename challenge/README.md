@@ -146,11 +146,30 @@ it to read the [root instructions](../AGENTS.md),
 have; it can then follow that device's setup instructions. Configure account
 credentials locally through the setup tools and device settings.
 
+### Install the project's Muse skill
+
+Once the project's `SKILL.md` is ready, install it after pairing and before
+testing. Paste the full file into the owner's Muse chat once and ask Muse to
+remember it. The skill tells Muse how to use the project's commands and
+reply to device events, such as reminder confirmations.
+
+With a USB-connected full-UI board, you can also send it from `esp32/`:
+
+```sh
+python3 tools/muse/chat.py --file path/to/SKILL.md "Please remember this skill"
+```
+
+Replace `path/to/SKILL.md` with your project's file path. Send the full skill
+again whenever it changes.
+
 ## 4. Develop and test your project
 
 Describe the intended project to your coding agent and follow the SDK's
 [application development guidance](../AGENTS.md#building-apps-and-demos).
 Reuse the existing device support and verify the project on your hardware.
+
+On 1.4–2 inch displays, use text at least 16 px high and keep labels to short
+words or icons. Check readability on the actual screen.
 
 Record the device, build configuration, SDK revision, build result and
 on-device results, and take photos or record a short video showing the
@@ -239,6 +258,11 @@ Gather the following materials:
 | Firmware | The rebuilt `muse-gadget.bin` with an empty SDK token, its target board and installation details; verify it from the Hub draft in step 6 |
 | Project source link, required | A public GitHub link that shows the project directly: introduce the project at the top of your Fork's README, or link the case directly to its project branch or change comparison |
 
+Link the project's `SKILL.md` in the Hub page's usage instructions. Include
+these steps for users: pair with Muse, paste the full skill into their Muse
+chat once (or use the USB command above), then try the project. Tell users
+to send the full skill again whenever it changes.
+
 Open the GitHub link while signed out to confirm that visitors can see the
 project introduction and source, or its project branch or change comparison.
 Include that project-specific link in the case.
@@ -286,9 +310,12 @@ Test the uploaded image before publishing:
    on the matching device.
 3. Enter your own Muse SDK token when the page prompts for it. The page
    writes it over serial into the device's settings after flashing.
-4. Complete Muse pairing or reconnect, then verify the project's main
-   functions on the device. Record the result with the application ID and
-   firmware filename.
+4. Complete Muse pairing or reconnect.
+5. Install the project's full `SKILL.md` in your Muse chat using the
+   [skill installation steps](#install-the-projects-muse-skill); send it
+   again after each skill change.
+6. Verify the project's main functions and device-event replies on the
+   device. Record the result with the application ID and firmware filename.
 
 This tests the same firmware image that is uploaded to the draft. Each
 firmware update repeats the rebuild, upload and draft-page device test.

@@ -22,29 +22,30 @@ from __future__ import annotations
 import os
 import shlex
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from cjson_source import cjson_source_dir
+
 ROOT = Path(__file__).resolve().parents[1]
 MUSE = ROOT / "components/muse"
 VSTREAM = ROOT / "components/muse_vstream"
-# CI supplies pinned upstream sources; local IDF builds already have cJSON.
-JSON = Path(os.environ.get("CJSON_SOURCE_DIR", ROOT / "managed_components/espressif__cjson/cJSON"))
 
 
 class MuseVideoTest(unittest.TestCase):
     def test_ring_and_wire(self) -> None:
-        if not (JSON / "cJSON.c").exists():
-            self.skipTest("cJSON not found: run idf.py build once, or set CJSON_SOURCE_DIR")
+        json_source = cjson_source_dir()
         cc = shlex.split(os.environ.get("CC", "cc"))
         with tempfile.TemporaryDirectory() as tmp:
             exe = Path(tmp, "video")
             build = subprocess.run(
                 [*cc, "-std=c11", "-O1", "-Wall", "-Wextra", "-Werror", "-Wno-unused-parameter",
-                 f"-I{VSTREAM / 'include'}", f"-I{MUSE}", f"-I{JSON}", "-o", str(exe),
+                 f"-I{VSTREAM / 'include'}", f"-I{MUSE}", f"-I{json_source}", "-o", str(exe),
                  str(ROOT / "tests/muse_video_harness.c"), str(VSTREAM / "muse_vstream.c"),
-                 str(MUSE / "muse_video_wire.c"), str(JSON / "cJSON.c"), "-lm"],
+                 str(MUSE / "muse_video_wire.c"), str(json_source / "cJSON.c"), "-lm"],
                 capture_output=True, text=True)
             self.assertEqual(build.returncode, 0, build.stdout + build.stderr)
             run = subprocess.run([str(exe)], capture_output=True, text=True, timeout=60)
