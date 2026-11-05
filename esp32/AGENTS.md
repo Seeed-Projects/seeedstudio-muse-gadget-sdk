@@ -807,9 +807,11 @@ against fakes, with no board or IDF environment required:
 python3 -m unittest discover -s tests -p 'test_*.py'
 ```
 
-Run one `idf.py build` first: `test_link_discovery` compiles cJSON from
-`managed_components/`, and that directory only exists after a build. Set `CC`
-or `CXX` to change compilers.
+cJSON sources are found through `CJSON_SOURCE_DIR` (containing `cJSON.c` and
+`cJSON.h`), then `managed_components/`, then the ESP-IDF component manager
+cache (including `IDF_COMPONENT_CACHE_PATH`). The cache remains after a
+UI-board build; missing sources skip with a `CJSON_SOURCE_DIR` setup message.
+Set `CC` or `CXX` to change compilers.
 
 The e-ink navigation tests use the pinned FreeInk source: set
 `FREEINK_SOURCE_DIR` to its checkout, or use `managed_components/freeink-sdk`

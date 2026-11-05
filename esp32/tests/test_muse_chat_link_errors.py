@@ -16,8 +16,12 @@ import os
 from pathlib import Path
 import re
 import subprocess
+import sys
 import tempfile
 import unittest
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from cjson_source import cjson_source_dir
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -25,6 +29,7 @@ ROOT = Path(__file__).resolve().parents[1]
 class ChatLinkErrors(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        cjson = cjson_source_dir()
         cls.tmp = tempfile.TemporaryDirectory()
         source = (ROOT / 'components/muse/muse_chat_link.c').read_text()
         # Keep all production declarations/functions together. Only platform
@@ -357,7 +362,6 @@ int main(int argc,char **argv) {
         c = Path(cls.tmp.name) / 'chat.c'
         c.write_text(code)
         cls.binary = c.with_suffix('')
-        cjson = ROOT / 'managed_components/espressif__cjson/cJSON'
         compiled = subprocess.run([
             os.environ.get('CC', 'cc'), '-std=gnu11', '-Wall', '-Wextra', '-Werror',
             '-I', str(cjson), '-I', str(ROOT / 'tests'), '-I', str(ROOT / 'components/muse'),

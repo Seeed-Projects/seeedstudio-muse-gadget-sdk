@@ -16,21 +16,21 @@ from pathlib import Path
 import os
 import shlex
 import subprocess
+import sys
 import tempfile
 import unittest
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from cjson_source import cjson_source_dir
 from test_link_ota import function_source
 
 ROOT = Path(__file__).resolve().parents[1]
-# CI supplies pinned upstream sources; local IDF builds already have cJSON.
-JSON = Path(os.environ.get(
-    "CJSON_SOURCE_DIR", ROOT / "managed_components/espressif__cjson/cJSON"
-))
 
 
 class LinkDiscoveryTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        json_source = cjson_source_dir()
         cls.temp = tempfile.TemporaryDirectory()
         cls.addClassCleanup(cls.temp.cleanup)
         out = Path(cls.temp.name)
@@ -47,9 +47,9 @@ class LinkDiscoveryTest(unittest.TestCase):
         cc = shlex.split(os.environ.get("CC", "cc"))
         cxx = shlex.split(os.environ.get("CXX", "c++"))
         # glibc hides ip_mreq in strict C11 mode without its default extensions.
-        flags = ["-Wall", "-Wextra", "-Werror", "-D_DEFAULT_SOURCE", "-DCJSON_NESTING_LIMIT=16", "-I", str(JSON), "-I", str(out)]
+        flags = ["-Wall", "-Wextra", "-Werror", "-D_DEFAULT_SOURCE", "-DCJSON_NESTING_LIMIT=16", "-I", str(json_source), "-I", str(out)]
         commands = [
-            [*cc, "-std=c11", *flags, "-c", str(JSON / "cJSON.c"), "-o", str(out / "cjson.o")],
+            [*cc, "-std=c11", *flags, "-c", str(json_source / "cJSON.c"), "-o", str(out / "cjson.o")],
             [*cc, "-std=c11", *flags, str(ROOT / "tests/link_discovery_harness.c"), str(out / "cjson.o"), "-lm", "-o", str(out / "discovery")],
             [*cxx, "-std=c++17", *flags, str(ROOT / "tests/link_discovery_payload_harness.cpp"), str(out / "cjson.o"), "-lm", "-o", str(out / "payload")],
             [*cc, "-std=c11", *flags, str(ROOT / "tests/link_discover_task_harness.c"), str(out / "cjson.o"), "-lm", "-o", str(out / "discover_task")],

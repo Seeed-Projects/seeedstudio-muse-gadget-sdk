@@ -29,15 +29,18 @@ import random
 import shlex
 import struct
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from cjson_source import cjson_source_dir
 
 ROOT = Path(__file__).resolve().parents[1]
 MUSE = ROOT / 'components/muse'
 TESTS = ROOT / 'tests'
 FAKES = TESTS / 'voice_call_fakes'
-JSON_SRC = Path(os.environ.get('CJSON_SOURCE_DIR', ROOT / 'managed_components/espressif__cjson/cJSON'))
 SANITIZE = ['-O1', '-g', '-fsanitize=address,undefined', '-fno-omit-frame-pointer']
 WARN = ['-Wall', '-Wextra', '-Werror']
 ENV = {**os.environ,
@@ -615,14 +618,15 @@ class VoicePeCallLoop(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        json_source = cjson_source_dir()
         cls.tmp = tempfile.TemporaryDirectory()
         cls.addClassCleanup(cls.tmp.cleanup)
         cls.binary = Path(cls.tmp.name) / 'voice_pe'
         build([[*CC, '-std=gnu11', *SANITIZE, *WARN, '-Wno-unused-function', '-Wno-unused-parameter',
-                '-Wno-unused-variable', '-I', str(FAKES / 'voice_pe'), '-I', str(FAKES), '-I', str(JSON_SRC),
+                '-Wno-unused-variable', '-I', str(FAKES / 'voice_pe'), '-I', str(FAKES), '-I', str(json_source),
                 '-I', str(TESTS), '-I', str(ROOT / 'main'), '-I', str(MUSE),
                 str(TESTS / 'voice_pe_call_harness.c'), str(MUSE / 'muse_voice_call_core.c'),
-                str(JSON_SRC / 'cJSON.c'), '-lm', '-o', str(cls.binary)]])
+                str(json_source / 'cJSON.c'), '-lm', '-o', str(cls.binary)]])
 
     def run_case(self, case):
         result = subprocess.run([str(self.binary), str(case)], capture_output=True, text=True, env=ENV)
@@ -640,7 +644,8 @@ class VoiceCallWiring(unittest.TestCase):
     it neither names an app ID nor calls into the call."""
 
     def compile_session(self, calls, *extra):
-        inc = ['-I', str(FAKES / 'session'), '-I', str(FAKES), '-I', str(JSON_SRC), '-I', str(TESTS / 'link_fakes'),
+        json_source = cjson_source_dir()
+        inc = ['-I', str(FAKES / 'session'), '-I', str(FAKES), '-I', str(json_source), '-I', str(TESTS / 'link_fakes'),
                '-I', str(TESTS), '-I', str(MUSE), '-I', str(ROOT / 'components/noise_core/include'),
                '-I', str(ROOT / 'components/minimp3/include')]
         command = [*CXX, '-std=gnu++17', *WARN, *([] if calls else ['-DMUSE_TEST_CALLS_OFF']), *inc,
