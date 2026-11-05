@@ -84,8 +84,10 @@ skill again after each change.
 
 Follow the [release steps](README.md#51-build-the-firmware-for-sharing):
 set `CONFIG_GADGET_SDK_TOKEN=""` in the selected build folder's `sdkconfig`,
-rebuild the target board, verify that the resulting configuration still
-has an empty token, and scan the exact `muse-gadget.bin` with:
+rebuild the target board and verify that the resulting configuration still
+has an empty token. Hub stores uploads by filename within each account:
+copy each project's `muse-gadget.bin` to its own filename, such as
+`fridge-notes-muse-gadget.bin`, then scan that exact upload copy with:
 
 ```sh
 grep -aqE 'mgst_[A-Za-z0-9_-]{43}' <firmware-path>
@@ -94,20 +96,28 @@ grep -aqE 'mgst_[A-Za-z0-9_-]{43}' <firmware-path>
 Exit code 1 passes; 0 detects a complete token pattern and requires a
 token-free rebuild and rescan; 2 or higher is a check error to resolve
 before retrying. Report the outcome while keeping matching values local.
-Upload the checked `muse-gadget.bin` after it passes. Hub supplies the
-bootloader and partition table for its standard device layout. Projects
-that change the partition table are incompatible with Hub flashing.
+Upload the checked project-named copy after it passes. A renamed image can
+be flashed and booted from the Hub draft page. Close the app's Hub editor
+page while updating its draft with the CLI and reopen it afterwards: an
+open editor saves the copy it loaded. Check that each project's draft has
+a different firmware link. Hub supplies the bootloader and partition table
+for its standard device layout. Projects that change the partition table
+are incompatible with Hub flashing.
 
 ## Test and publish the case
 
 Return the draft's editing link and application ID. Guide the participant
 to test the uploaded image on their own device with the draft page's flash
-button, enter their own token for post-flash serial provisioning, and test
-the project's main functions after pairing or reconnecting and installing
-the project's full `SKILL.md` in the owner's Muse chat. Check device-event
-replies as well as commands, and repeat skill installation after each skill
-change. Flashing follows the session's existing authorization requirements.
-Repeat this test after each firmware update.
+button. After the page finishes writing the firmware, restart the device
+with its reset button or by unplugging and reconnecting USB, then follow
+the page's token prompt. If no prompt appears, send `>sdk_token=mgst_…` over
+USB serial and check for `@sdk_token ok`; see
+[the SDK token](../web-flasher/README.md#the-sdk-token).
+Test the project's main functions after pairing or reconnecting and
+installing the project's full `SKILL.md` in the owner's Muse chat. Check
+device-event replies as well as commands, and repeat skill installation
+after each skill change. Flashing follows the session's existing
+authorization requirements. Repeat this test after each firmware update.
 
 After all four project checks pass, the participant reviews the case,
 firmware and public project-source link and publishes the case manually.

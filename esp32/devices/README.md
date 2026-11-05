@@ -130,6 +130,12 @@ in, and temperature and humidity come from the Grove AHT20 in the box (plug it
 in). Muse reads them all at once with `sensors.read`. This needs Seeed's stock
 RP2040 firmware.
 
+The Indicator's RGB panel reads its PSRAM frame buffer through two 20-line
+DMA bounce buffers in internal RAM (38,400 bytes in all), which keep the
+panel fed while Wi-Fi and other tasks share PSRAM. Checked on one Indicator
+D1: a static 480×480 page with thin coloured lines stays steady while Wi-Fi
+is busy.
+
 The reTerminal E1001's e-paper shows only black and white, 1 bit per pixel,
 and keeps its picture without power. It shows a still status screen (the
 agent's name, the character and a line of status text) that changes only when
