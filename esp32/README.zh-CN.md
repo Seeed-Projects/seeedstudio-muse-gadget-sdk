@@ -181,6 +181,8 @@ idf.py -p /dev/cu.usbmodem1101 flash monitor
 
 每块板的硬件、功能，以及哪里能买到，见 [`devices/`](devices)。
 
+SenseCAP Indicator 的 RGB 屏幕通过内部 RAM 中两个 20 行的 DMA 中转缓冲区（共 38,400 字节）读取 PSRAM 里的帧缓冲区，Wi-Fi 和其他任务同时使用 PSRAM 时，屏幕也能持续取到像素。已在一台 Indicator D1 上实测：带细彩线的静态 480×480 页面在 Wi-Fi 繁忙时保持稳定。
+
 `tools/board.sh BOARD [build|flash|monitor|flash-monitor] [PORT]` 会在各自的 `build-<board>` 目录里，用对应的芯片和设置编译每块板。支持图片的板子可以显示 Muse 发来的图片：`tools/image_for_display.py` 会按屏幕尺寸准备一张图。
 
 没有 PSRAM（板上的额外内存）的板子，比如经典 ESP32 和 ESP32-C6，不会跑家庭网络隧道，因为隧道需要的内存比它们拥有的更多。Muse 仍然可以连上这台设备并控制它。

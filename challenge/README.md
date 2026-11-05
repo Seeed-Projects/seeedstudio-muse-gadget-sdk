@@ -216,17 +216,23 @@ SDK's original partition layout for the device when preparing a Hub image.
    while the build completes. After rebuilding, confirm the token remains
    empty in that build folder's `sdkconfig`.
 
-3. Select **only `muse-gadget.bin` from that rebuilt directory** for the
-   Hub firmware upload. For Sticky, this is
+3. Use **only the application image `muse-gadget.bin` from that rebuilt
+   directory** for the Hub firmware upload. For Sticky, this is
    `esp32/build-reterminal-sticky/muse-gadget.bin`, relative to the repository
    root. Hub adds its own bootloader and partition table when flashing.
 
+   Hub stores uploads by filename within each account. Give each project's
+   firmware its own filename: copy that build's `muse-gadget.bin` to, for
+   example, `fridge-notes-muse-gadget.bin` in the same directory, and upload
+   the renamed copy. The renamed image can be flashed and booted from the
+   Hub draft page.
+
    Before uploading, scan that exact file for a complete Muse SDK token.
    From `esp32/`, run the following command, replacing the build directory
-   with your device's:
+   and filename with your upload copy's path:
 
    ```sh
-   grep -aoE 'mgst_[A-Za-z0-9_-]{43}' build-reterminal-sticky/muse-gadget.bin
+   grep -aoE 'mgst_[A-Za-z0-9_-]{43}' build-reterminal-sticky/fridge-notes-muse-gadget.bin
    ```
 
    The pattern matches `mgst_` followed by 43 token characters. The short
@@ -240,7 +246,7 @@ SDK's original partition layout for the device when preparing a Hub image.
    Agents use the quiet equivalent to keep token values out of tool output:
 
    ```sh
-   grep -aqE 'mgst_[A-Za-z0-9_-]{43}' build-reterminal-sticky/muse-gadget.bin
+   grep -aqE 'mgst_[A-Za-z0-9_-]{43}' build-reterminal-sticky/fridge-notes-muse-gadget.bin
    ```
 
    For this quiet command, the exit code is the result: 1 passes, 0 detects
@@ -255,7 +261,7 @@ Gather the following materials:
 | Project introduction | Name, purpose, supported devices and main features |
 | Demonstration | Cover image, real-device photos and a video link when available |
 | Usage instructions | Hardware list, installation and setup steps, operation and test results |
-| Firmware | The rebuilt `muse-gadget.bin` with an empty SDK token, its target board and installation details; verify it from the Hub draft in step 6 |
+| Firmware | A project-named copy of the rebuilt `muse-gadget.bin` with an empty SDK token, its target board and installation details; verify it from the Hub draft in step 6 |
 | Project source link, required | A public GitHub link that shows the project directly: introduce the project at the top of your Fork's README, or link the case directly to its project branch or change comparison |
 
 Link the project's `SKILL.md` in the Hub page's usage instructions. Include
@@ -298,9 +304,13 @@ upload project materials.
 Ask your agent to follow the
 [CLI documentation](https://sensecraft.seeed.cc/wiki/en/sensecraft-cli/)
 and its bundled app-creation skill to upload the project materials and
-**only the rebuilt `muse-gadget.bin`** to CodeCraft Hub as a draft, including
-the required public GitHub project source link in the case. Have it return the draft's editing
-link and application ID.
+**only the project's renamed application image from step 5.1** to CodeCraft
+Hub as a draft, including the required public GitHub project source link in
+the case. Have it return the draft's editing link and application ID.
+
+Close the app's Hub editor page while the agent updates the draft with the
+CLI, then reopen it afterwards: an open editor saves the copy it loaded.
+Check that each project's draft has a different firmware link.
 
 Test the uploaded image before publishing:
 
@@ -308,8 +318,11 @@ Test the uploaded image before publishing:
    be tested on your device before publication.
 2. Use the draft's built-in flash button to install its uploaded firmware
    on the matching device.
-3. Enter your own Muse SDK token when the page prompts for it. The page
-   writes it over serial into the device's settings after flashing.
+3. After the page finishes writing the firmware, restart the device with
+   its reset button or by unplugging and reconnecting USB, then follow the
+   page's prompt to enter your own Muse SDK token. If no token prompt
+   appears, send `>sdk_token=mgst_…` over USB serial; the device answers
+   `@sdk_token ok`. See [the SDK token](../web-flasher/README.md#the-sdk-token).
 4. Complete Muse pairing or reconnect.
 5. Install the project's full `SKILL.md` in your Muse chat using the
    [skill installation steps](#install-the-projects-muse-skill); send it

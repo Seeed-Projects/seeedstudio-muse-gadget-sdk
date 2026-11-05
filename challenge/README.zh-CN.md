@@ -146,12 +146,14 @@ Hub 会为所选设备提供开机程序（bootloader）和分区表。**Hub 烧
 
    其他设备使用[对应的编译命令](../README.zh-CN.md#方法-c自己编译)。SDK 支持空 token 构建；构建过程中显示 `No SDK token` 提示属于预期情况。构建完成后，确认该构建目录的 `sdkconfig` 中 token 仍为空。
 
-3. Hub 的固件上传**只选择这个构建目录里新生成的 `muse-gadget.bin`**。例如 Sticky 的文件相对于仓库根目录为 `esp32/build-reterminal-sticky/muse-gadget.bin`。烧录时，Hub 会补充它自带的开机程序和分区表。
+3. Hub 的固件上传**只使用这个构建目录里新生成的应用固件 `muse-gadget.bin`**。例如 Sticky 的文件相对于仓库根目录为 `esp32/build-reterminal-sticky/muse-gadget.bin`。烧录时，Hub 会补充它自带的开机程序和分区表。
 
-   上传前，对准备上传的这个文件检查完整 Muse SDK token。在 `esp32/` 目录运行以下命令，将构建目录替换为自己的设备对应目录：
+   Hub 按账号内的文件名保存上传文件。每个项目使用独立的固件文件名：将该次构建的 `muse-gadget.bin` 在同目录复制为例如 `fridge-notes-muse-gadget.bin`，上传这个改名副本。改名后的固件可从 Hub 草稿页正常烧录并启动。
+
+   上传前，对准备上传的这个文件检查完整 Muse SDK token。在 `esp32/` 目录运行以下命令，将目录和文件名替换为上传副本的路径：
 
    ```sh
-   grep -aoE 'mgst_[A-Za-z0-9_-]{43}' build-reterminal-sticky/muse-gadget.bin
+   grep -aoE 'mgst_[A-Za-z0-9_-]{43}' build-reterminal-sticky/fridge-notes-muse-gadget.bin
    ```
 
    规则匹配 `mgst_` 加上 43 个 token 字符。固件用于校验格式的短前缀 `mgst_` 本身不会命中。**文件可正常读取、命令没有输出且退出码为 1，才算通过这项 token 检查。** 有输出且退出码为 0，表示发现完整 token 格式的内容，应清空构建配置中的 token、重新构建，再检查新固件。退出码为 2 或更大表示检查失败，修正文件路径或读取错误后重查。匹配值保留在本地，对外只汇报是否命中。
@@ -159,7 +161,7 @@ Hub 会为所选设备提供开机程序（bootloader）和分区表。**Hub 烧
    AI 执行时使用静默版本，将 token 内容保留在本地：
 
    ```sh
-   grep -aqE 'mgst_[A-Za-z0-9_-]{43}' build-reterminal-sticky/muse-gadget.bin
+   grep -aqE 'mgst_[A-Za-z0-9_-]{43}' build-reterminal-sticky/fridge-notes-muse-gadget.bin
    ```
 
    静默版本以退出码判断：1 为通过，0 为命中 token，2 或更大为检查失败。上传通过检查的那一份固件。
@@ -173,7 +175,7 @@ Hub 会为所选设备提供开机程序（bootloader）和分区表。**Hub 烧
 | 项目介绍 | 名称、用途、支持设备和主要功能 |
 | 效果展示 | 封面、真实设备照片，以及可提供的演示视频链接 |
 | 使用说明 | 硬件清单、安装和配置步骤、操作方法与实测结果 |
-| 固件 | 清空 SDK token 后重新构建的 `muse-gadget.bin`，以及对应的板卡和安装说明；在第 6 步通过 Hub 草稿页验证 |
+| 固件 | 清空 SDK token 后重新构建的 `muse-gadget.bin`，复制为项目独立文件名，以及对应的板卡和安装说明；在第 6 步通过 Hub 草稿页验证 |
 | 作品源码链接，必需 | 能直接展示作品的公开 GitHub 链接：在自己 Fork 的 README 顶部介绍作品，或在案例中直接链接到作品分支或改动对比 |
 
 在 Hub 页面的使用说明中链接项目的 `SKILL.md`，并列出用户操作步骤：完成 Muse 配对，将技能全文粘贴到自己的 Muse 聊天中一次（或使用上面的 USB 命令），再体验项目。说明每次修改技能后都应重新发送全文。
@@ -200,13 +202,15 @@ sensecraft-cli auth info
 
 ## 6. 上传并测试项目草稿
 
-让 AI 按照 [CLI 文档](https://sensecraft.seeed.cc/wiki/en/sensecraft-cli/)和 CLI 自带的应用创建技能，将项目资料和**重新构建的 `muse-gadget.bin` 这一个固件文件**上传到 CodeCraft Hub，在案例中附上必需的公开 GitHub 作品源码链接，保存为草稿，并返回草稿编辑链接和应用编号。
+让 AI 按照 [CLI 文档](https://sensecraft.seeed.cc/wiki/en/sensecraft-cli/)和 CLI 自带的应用创建技能，将项目资料和**第 5.1 步改为项目独立文件名的应用固件副本**上传到 CodeCraft Hub，在案例中附上必需的公开 GitHub 作品源码链接，保存为草稿，并返回草稿编辑链接和应用编号。
+
+AI 通过 CLI 更新草稿时，关闭该应用的 Hub 编辑页，更新完成后再打开：打开的编辑页会保存它加载时的副本。检查每个项目草稿的固件链接各不相同。
 
 发布前，验证已经上传的这份固件：
 
 1. 打开 Hub 草稿页，用 USB 连接自己的设备。草稿阶段即可在自己的设备上测试。
 2. 使用草稿页自带的烧录按钮，把草稿中上传的固件安装到对应型号的设备。
-3. 按页面提示填写自己的 Muse SDK token，由页面在烧录完成后通过串口写入设备设置。
+3. 页面完成固件写入后，先按设备复位键，或拔下并重新连接 USB 来重启设备，再按页面提示填写自己的 Muse SDK token。若未出现 token 提示，可通过 USB 串口发送 `>sdk_token=mgst_…`，设备会回复 `@sdk_token ok`，详见 [SDK token 说明](../web-flasher/README.md#the-sdk-token)。
 4. 完成 Muse 配对或重新连接。
 5. 按[技能安装步骤](#安装项目的-muse-技能)，将项目的 `SKILL.md` 全文安装到自己的 Muse 聊天中；每次修改技能后重新发送。
 6. 在设备上验证项目的主要功能和设备事件回复，将结果与应用编号、固件文件名一起记录。

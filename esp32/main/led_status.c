@@ -149,7 +149,7 @@ static const char *TAG = "link.led";
 #define LCD_V_RES        480
 // Lines per DMA bounce buffer (two, in internal RAM). They keep the panel fed
 // while PSRAM is busy, and save a cache flush of the frame buffer per draw.
-#define LCD_BOUNCE_LINES 10
+#define LCD_BOUNCE_LINES 20
 #define EXP_ADDR         0x20
 #define EXP_ADDR_ALT     0x39  // some boards
 #define EXP_REG_OUT0     0x02
