@@ -80,7 +80,11 @@ def decode_snapshot(log):
 
 
 def main():
-    import serial
+    try:
+        import serial
+    except ImportError:
+        sys.exit("pyserial is missing. Use ESP-IDF's Python environment after sourcing export.sh, "
+                 "or install it with: python3 -m pip install pyserial")
 
     port, keys, out = sys.argv[1], sys.argv[2], sys.argv[3]
     s = serial.Serial(port, 115200, timeout=0.2)
