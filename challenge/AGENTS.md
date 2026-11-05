@@ -17,6 +17,12 @@ or development. Prepare the separate Muse account through the beginner's
 guide. Explain that the project source must be public on GitHub and linked
 from the case.
 
+After pairing, guide the owner to paste the project's full `SKILL.md` into
+their Muse chat once and ask Muse to remember it, or use the participant
+guide's [USB command](README.md#install-the-projects-muse-skill) on a full-UI
+board. Repeat after each skill change,
+before testing commands and device-event replies.
+
 Follow [step 3](README.md#3-fork-and-set-up-the-muse-gadget-sdk) to create
 or reuse a public Fork and configure the checkout:
 
@@ -51,6 +57,10 @@ For a project in the participant's own repository, completion requires:
 Record the tested source revision, device, build result and actual hardware
 results. Report pending checks explicitly. Use the platform and board
 instructions for hardware facts, build commands and device operations.
+
+For 1.4–2 inch displays, use text at least 16 px high with short words or
+icons, and check readability on the device.
+
 Contribution checks in the root and platform `AGENTS.md` files apply to
 pull requests contributed to this repository. These include the default C5
 build and host tests in the ESP32 `Before you hand back work` section,
@@ -66,6 +76,11 @@ Global. Collect the required public GitHub project source link and open it
 while signed out. The link must show the project directly: either the Fork's
 README starts with its project introduction, or the case links to the
 project branch or change comparison. Include that link in the case.
+
+Include a link to the project's `SKILL.md` in the Hub page's usage steps:
+pair with Muse, paste the full skill into the user's Muse chat once (or use
+the guide's USB command), then use the project. Tell users to send the full
+skill again after each change.
 
 Follow the [release steps](README.md#51-build-the-firmware-for-sharing):
 set `CONFIG_GADGET_SDK_TOKEN=""` in the selected build folder's `sdkconfig`,
@@ -88,8 +103,11 @@ that change the partition table are incompatible with Hub flashing.
 Return the draft's editing link and application ID. Guide the participant
 to test the uploaded image on their own device with the draft page's flash
 button, enter their own token for post-flash serial provisioning, and test
-the project's main functions. Flashing follows the session's existing
-authorization requirements. Repeat this test after each firmware update.
+the project's main functions after pairing or reconnecting and installing
+the project's full `SKILL.md` in the owner's Muse chat. Check device-event
+replies as well as commands, and repeat skill installation after each skill
+change. Flashing follows the session's existing authorization requirements.
+Repeat this test after each firmware update.
 
 After all four project checks pass, the participant reviews the case,
 firmware and public project-source link and publishes the case manually.
