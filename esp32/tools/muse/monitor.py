@@ -24,7 +24,13 @@ except ImportError:
              "or install it with: python3 -m pip install pyserial")
 
 s = serial.Serial(sys.argv[1], 115200, timeout=0.2)
-s.dtr = False; s.rts = True; time.sleep(0.1); s.rts = False   # reset
+# USB-UART bridges need both lines to settle released before the EN pulse.
+s.dtr = False
+s.rts = False
+time.sleep(0.05)
+s.rts = True
+time.sleep(0.1)
+s.rts = False
 end = time.time() + (float(sys.argv[2]) if len(sys.argv) > 2 else 8)
 out = b''
 while time.time() < end:
