@@ -210,9 +210,11 @@ For pull requests to this repository, before you hand work back:
 1. Build each board you touched from a fresh build directory, and one board
    you didn't if shared code changed. Check the overlay reached the config and
    the app-size line, as [Verify](esp32/devices/AGENTS.md#8-verify) describes.
-2. Run the host tests from `esp32/`. `tools/muse/board.sh` clears
-   `managed_components/`, so run one `idf.py build` first (the default C5
-   build is enough), then `python3 -m unittest discover -s tests -p 'test_*.py'`.
+2. Run `python3 -m unittest discover -s tests -p 'test_*.py'` from `esp32/`.
+   cJSON lookup uses `CJSON_SOURCE_DIR` (containing `cJSON.c` and `cJSON.h`),
+   then `managed_components/`, then the ESP-IDF component manager cache,
+   which remains after a UI-board build. Missing sources skip with setup
+   instructions.
    E-ink navigation tests use the pinned FreeInk checkout through
    `FREEINK_SOURCE_DIR` or `managed_components/freeink-sdk` from a Sticky
    configure. Report skipped tests and their missing inputs.
